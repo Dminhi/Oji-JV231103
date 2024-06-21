@@ -2,6 +2,7 @@ package com.example.ojt.controller.candidate;
 
 import com.example.ojt.exception.CustomException;
 import com.example.ojt.model.dto.request.CandidateRequestDTO;
+import com.example.ojt.model.dto.request.EduCandidateRequestDTO;
 import com.example.ojt.model.dto.response.APIResponse;
 import com.example.ojt.model.entity.CertificateCandidate;
 import com.example.ojt.service.candidate.ICandidateService;
@@ -22,6 +23,16 @@ public class CertificateCandidateController {
         boolean check = certificateCandidateService.saveOrUpdate(certificateCandidate);
         if(check) {
             APIResponse apiResponse = new APIResponse(200, "Create certificate Candidate success");
+            return new ResponseEntity<>(apiResponse, HttpStatus.CREATED);
+        }else {
+            throw new CustomException("Lack of compulsory registration information or invalid information.", HttpStatus.UNPROCESSABLE_ENTITY);
+        }
+    }
+    @PutMapping("")
+    ResponseEntity<?> EditCerEduCandidate(@Valid @RequestBody CertificateCandidate certificateCandidate) throws CustomException {
+        boolean check = certificateCandidateService.saveOrUpdate(certificateCandidate);
+        if(check) {
+            APIResponse apiResponse = new APIResponse(200, "Update Certificate candidate success");
             return new ResponseEntity<>(apiResponse, HttpStatus.CREATED);
         }else {
             throw new CustomException("Lack of compulsory registration information or invalid information.", HttpStatus.UNPROCESSABLE_ENTITY);
