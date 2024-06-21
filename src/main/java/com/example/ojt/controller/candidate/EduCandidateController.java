@@ -21,7 +21,17 @@ public class EduCandidateController {
     ResponseEntity<?> addCandidate(@Valid @RequestBody EduCandidateRequestDTO eduCandidateRequestDTO) throws CustomException {
         boolean check = eduCandidateService.saveOrUpdate(eduCandidateRequestDTO);
         if(check) {
-            APIResponse apiResponse = new APIResponse(200, "Create candidate success");
+            APIResponse apiResponse = new APIResponse(200, "Create Education candidate success");
+            return new ResponseEntity<>(apiResponse, HttpStatus.CREATED);
+        }else {
+            throw new CustomException("Lack of compulsory registration information or invalid information.", HttpStatus.UNPROCESSABLE_ENTITY);
+        }
+    }
+    @PutMapping("")
+    ResponseEntity<?> EditEduCandidate(@Valid @RequestBody EduCandidateRequestDTO eduCandidateRequestDTO) throws CustomException {
+        boolean check = eduCandidateService.saveOrUpdate(eduCandidateRequestDTO);
+        if(check) {
+            APIResponse apiResponse = new APIResponse(200, "Update Education candidate success");
             return new ResponseEntity<>(apiResponse, HttpStatus.CREATED);
         }else {
             throw new CustomException("Lack of compulsory registration information or invalid information.", HttpStatus.UNPROCESSABLE_ENTITY);
