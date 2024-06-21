@@ -22,21 +22,19 @@ public class CustomDeniedHandler implements AccessDeniedHandler {
         @Override
         public void handle(HttpServletRequest request,
                 HttpServletResponse response,
-                AccessDeniedException exc) throws IOException, ServletException {
+                AccessDeniedException exc) throws IOException {
             Authentication auth
                     = SecurityContextHolder.getContext().getAuthentication();
             if (auth != null) {
                 log.warn("User: " + auth.getName()
                         + " attempted to access the protected URL: ");
             }
-
             response.setHeader("error","authorize");
             response.setContentType(MediaType.APPLICATION_JSON_VALUE);
             response.setStatus(403);
             Map<String , Object> map =new HashMap<>();
-            map.put("error",new ResponseError(403, HttpStatus.FORBIDDEN.toString(),exc.getMessage()));
+            map.put("Auth Error",new ResponseError(403, HttpStatus.FORBIDDEN.toString(),exc.getMessage()));
             ObjectMapper objectMapper = new ObjectMapper();
             objectMapper.writeValue(response.getOutputStream(),map);
-
         }
 }

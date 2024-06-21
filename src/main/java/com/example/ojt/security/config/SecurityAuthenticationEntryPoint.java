@@ -13,7 +13,7 @@ import java.io.IOException;
 @Component
 public class SecurityAuthenticationEntryPoint implements AuthenticationEntryPoint {
     @Override
-    public void commence(HttpServletRequest request, HttpServletResponse response, AuthenticationException authException) throws IOException, ServletException {
+    public void commence(HttpServletRequest request, HttpServletResponse response, AuthenticationException authException) throws IOException {
         System.out.println(authException);
         response.sendError(401,"forbidden");
     }

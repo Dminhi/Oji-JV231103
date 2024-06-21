@@ -22,6 +22,7 @@ public class APIControllerAdvice {
         return  map;
     }
     @ExceptionHandler(MethodArgumentNotValidException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
     public Map<String, Object> invalidRequest(MethodArgumentNotValidException ex) {
         Map<String, String> errors = new HashMap<>();
         ex.getBindingResult().getFieldErrors().forEach(fieldError -> {
@@ -46,26 +47,39 @@ public class APIControllerAdvice {
 
 
     @ExceptionHandler(NotFoundException.class)
-    public Map<String, Object> handleNotFoundException(NotFoundException ex) {
-        Map<String, Object> errorResponse = new HashMap<>();
-        errorResponse.put("message", ex.getMessage());
-        errorResponse.put("status", "NOT_FOUND");
-        return errorResponse;
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public Map<String,Object> handleNotFoundException(NotFoundException ex) {
+        Map<String,Object> map = new HashMap<>();
+        map.put("error", "Bad Request");
+        map.put("statusCode", 400);
+        map.put("message", ex.getMessage());
+        Map<String,Object> response = new HashMap<>();
+        response.put("Fields Error",map);
+        return response;
     }
 
     @ExceptionHandler(AccountLockedException.class)
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ResponseStatus(HttpStatus.FORBIDDEN)
     public Map<String,Object> handelAccountLockedException(AccountLockedException e){
         Map<String,Object> map = new HashMap<>();
-        map.put("error", new ResponseError(403,"FOR_BIDDEN",e.getMessage()));
-        return map;
+        map.put("error", "Forbidden");
+        map.put("statusCode", 403);
+        map.put("message", e.getMessage());
+        Map<String,Object> response = new HashMap<>();
+        response.put("Fields Error",map);
+        return response;
     }
 
     @ExceptionHandler(RequestErrorException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public Map<String,Object> handelRequestErrorException(RequestErrorException e){
         Map<String,Object> map = new HashMap<>();
-        map.put("error", new ResponseError(400,"BAD_REQUEST",e.getMessage()));
-        return map;
+        map.put("statusCode", 400);
+        map.put("message", e.getMessage());
+        map.put("error", "Bad Request");
+
+        Map<String,Object> response = new HashMap<>();
+        response.put("Fields Error",map);
+        return response;
     }
 }
