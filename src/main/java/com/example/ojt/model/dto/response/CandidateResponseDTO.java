@@ -43,6 +43,5 @@ public class CandidateResponseDTO {
         this.status = candidate.getStatus();
         this.createAt = candidate.getCreatedAt();
         this.account = candidate.getAccount().getEmail();
-
     }
 }
