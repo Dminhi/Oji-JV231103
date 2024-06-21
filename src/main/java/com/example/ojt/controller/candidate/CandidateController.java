@@ -1,4 +1,4 @@
-package com.example.ojt.controller;
+package com.example.ojt.controller.candidate;
 
 import com.example.ojt.exception.CustomException;
 import com.example.ojt.model.dto.request.CandidateRequestDTO;
@@ -25,5 +25,15 @@ public class CandidateController {
             }else {
                 throw new CustomException("Lack of compulsory registration information or invalid information.", HttpStatus.UNPROCESSABLE_ENTITY);
             }
+    }
+    @PutMapping("")
+    ResponseEntity<?> editCandidate(@Valid @ModelAttribute("candidate")CandidateRequestDTO candidateRequestDTO) throws CustomException {
+        boolean check = candidateService.saveOrUpdate(candidateRequestDTO);
+        if(check) {
+            APIResponse apiResponse = new APIResponse(200, "Update candidate success");
+            return new ResponseEntity<>(apiResponse, HttpStatus.CREATED);
+        }else {
+            throw new CustomException("Lack of compulsory registration information or invalid information.", HttpStatus.UNPROCESSABLE_ENTITY);
+        }
     }
 }
