@@ -71,4 +71,7 @@ public class AccountDetailsCustom implements UserDetails {
     public boolean isEnabled() {
         return status == 1;
     }
+    public String getRoleName() {
+        return role.getRoleName().name();
+    }
 }
