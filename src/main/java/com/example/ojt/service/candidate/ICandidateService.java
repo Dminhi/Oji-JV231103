@@ -1,3 +1,4 @@
+
 package com.example.ojt.service.candidate;
 
 import com.example.ojt.exception.CustomException;
@@ -17,3 +18,4 @@ public interface ICandidateService {
    CandidateResponseDTO getCandidate() throws CustomException;
 
 }
+

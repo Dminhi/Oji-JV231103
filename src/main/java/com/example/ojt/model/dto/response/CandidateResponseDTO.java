@@ -1,3 +1,4 @@
+
 package com.example.ojt.model.dto.response;
 
 import com.example.ojt.model.entity.Candidate;
@@ -14,7 +15,6 @@ import java.util.Date;
 @Setter
 @Builder
 public class CandidateResponseDTO {
-//    private Integer id;
     private String name;
     private String birthday;
     private String address;
@@ -28,7 +28,6 @@ public class CandidateResponseDTO {
     private Integer status;
     private Date createAt = new Date();
     public CandidateResponseDTO (Candidate candidate) {
-//        this.id = candidate.getId();
         this.name = candidate.getName();
         this.birthday = candidate.getBirthday();
         this.address = candidate.getAddress();
@@ -44,3 +43,4 @@ public class CandidateResponseDTO {
 
     }
 }
+

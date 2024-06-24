@@ -1,7 +1,7 @@
+
 package com.example.ojt.service.candidate;
 
 import com.example.ojt.exception.CustomException;
-import com.example.ojt.model.dto.mapper.PageDataDTO;
 import com.example.ojt.model.dto.request.CandidateRequestDTO;
 import com.example.ojt.model.dto.response.CandidateResponseDTO;
 import com.example.ojt.model.entity.Account;
@@ -11,10 +11,6 @@ import com.example.ojt.repository.ICandidateRepository;
 import com.example.ojt.security.principle.AccountDetailsCustom;
 import com.example.ojt.service.UploadService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -126,3 +122,4 @@ public class CandidateService implements ICandidateService {
         return new CandidateResponseDTO(candidate);
     }
 }
+
