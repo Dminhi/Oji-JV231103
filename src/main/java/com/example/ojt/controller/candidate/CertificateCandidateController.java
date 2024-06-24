@@ -1,20 +1,13 @@
 package com.example.ojt.controller.candidate;
 
 import com.example.ojt.exception.CustomException;
-<<<<<<< HEAD
 import com.example.ojt.model.dto.mapper.HttpResponse;
 import com.example.ojt.model.dto.mapper.PageDataDTO;
 import com.example.ojt.model.dto.mapper.ResponseMapper;
-import com.example.ojt.model.dto.request.CandidateRequestDTO;
-import com.example.ojt.model.dto.request.EduCandidateRequestDTO;
 import com.example.ojt.model.dto.response.APIResponse;
 import com.example.ojt.model.dto.response.CertificateCandidateResponseDTO;
-=======
-import com.example.ojt.model.dto.request.CandidateRequestDTO;
-import com.example.ojt.model.dto.response.APIResponse;
->>>>>>> fbb06c0 (Task-4950-add-CertificateCandidate)
+
 import com.example.ojt.model.entity.CertificateCandidate;
-import com.example.ojt.service.candidate.ICandidateService;
 import com.example.ojt.service.cerCandidate.ICertificateCandidateService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,7 +20,6 @@ import org.springframework.web.bind.annotation.*;
 public class CertificateCandidateController {
     @Autowired
     private ICertificateCandidateService certificateCandidateService;
-<<<<<<< HEAD
 
     @PostMapping("")
     ResponseEntity<?> addCandidate(@Valid @RequestBody CertificateCandidate certificateCandidate) throws CustomException {
@@ -75,16 +67,5 @@ public class CertificateCandidateController {
                 cerCandidatePage
         ), HttpStatus.OK);
     }
-=======
-    @PostMapping("")
-    ResponseEntity<?> addCandidate(@Valid @RequestBody CertificateCandidate certificateCandidate) throws CustomException {
-        boolean check = certificateCandidateService.saveOrUpdate(certificateCandidate);
-        if(check) {
-            APIResponse apiResponse = new APIResponse(200, "Create certificate Candidate success");
-            return new ResponseEntity<>(apiResponse, HttpStatus.CREATED);
-        }else {
-            throw new CustomException("Lack of compulsory registration information or invalid information.", HttpStatus.UNPROCESSABLE_ENTITY);
-        }
-    }
->>>>>>> fbb06c0 (Task-4950-add-CertificateCandidate)
+
 }
