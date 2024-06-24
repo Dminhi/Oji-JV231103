@@ -14,7 +14,7 @@ import java.util.Date;
 @Setter
 @Builder
 public class CandidateResponseDTO {
-    private Integer id;
+//    private Integer id;
     private String name;
     private String birthday;
     private String address;
@@ -27,9 +27,8 @@ public class CandidateResponseDTO {
     private String aboutme;
     private Integer status;
     private Date createAt = new Date();
-    private String account;
     public CandidateResponseDTO (Candidate candidate) {
-        this.id = candidate.getId();
+//        this.id = candidate.getId();
         this.name = candidate.getName();
         this.birthday = candidate.getBirthday();
         this.address = candidate.getAddress();
@@ -42,7 +41,6 @@ public class CandidateResponseDTO {
         this.aboutme = candidate.getAboutme();
         this.status = candidate.getStatus();
         this.createAt = candidate.getCreatedAt();
-        this.account = candidate.getAccount().getEmail();
 
     }
 }
