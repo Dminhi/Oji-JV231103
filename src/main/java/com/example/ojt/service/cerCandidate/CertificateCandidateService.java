@@ -4,12 +4,9 @@ import com.example.ojt.exception.CustomException;
 import com.example.ojt.model.dto.mapper.PageDataDTO;
 import com.example.ojt.model.dto.response.CertificateCandidateResponseDTO;
 import com.example.ojt.model.entity.Account;
-import com.example.ojt.model.entity.Candidate;
 import com.example.ojt.model.entity.CertificateCandidate;
-import com.example.ojt.model.entity.EducationCandidate;
 import com.example.ojt.repository.IAccountRepository;
 import com.example.ojt.repository.ICertificateCandidateRepository;
-import com.example.ojt.repository.IEduCandidateRepository;
 import com.example.ojt.security.principle.AccountDetailsCustom;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -21,15 +18,16 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
+
 import java.util.Objects;
 
 @Service
-public class CertificateCandidateService implements ICertificateCandidateService {
+public class CertificateCandidateService implements ICertificateCandidateService{
+
     @Autowired
     private IAccountRepository accountRepository;
     @Autowired
     private ICertificateCandidateRepository certificateCandidateRepository;
-
     @Override
     public boolean saveOrUpdate(CertificateCandidate certificateCandidate) throws CustomException {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -117,4 +115,5 @@ public class CertificateCandidateService implements ICertificateCandidateService
         Page<CertificateCandidate> list = certificateCandidateRepository.findAll(pageable);
         return list.map(CertificateCandidateResponseDTO::new);
     }
+
 }

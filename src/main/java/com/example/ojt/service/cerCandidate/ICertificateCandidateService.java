@@ -3,7 +3,6 @@ package com.example.ojt.service.cerCandidate;
 import com.example.ojt.exception.CustomException;
 import com.example.ojt.model.dto.mapper.PageDataDTO;
 import com.example.ojt.model.dto.response.CertificateCandidateResponseDTO;
-import com.example.ojt.model.dto.response.ProjectCandidateResponseDTO;
 import com.example.ojt.model.entity.CertificateCandidate;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -18,3 +17,5 @@ public interface ICertificateCandidateService {
     PageDataDTO<CertificateCandidateResponseDTO> getCerCandidate(String keyword, int page, int limit, String sort, String order) throws CustomException;
 
    }
+
+
