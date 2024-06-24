@@ -37,6 +37,5 @@ public class CustomDeniedHandler implements AccessDeniedHandler {
             map.put("error",new ResponseError(403, HttpStatus.FORBIDDEN.toString(),exc.getMessage()));
             ObjectMapper objectMapper = new ObjectMapper();
             objectMapper.writeValue(response.getOutputStream(),map);
-
         }
 }

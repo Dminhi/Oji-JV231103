@@ -21,6 +21,4 @@ public class TypesJobs {
     @ManyToOne
     @JoinColumn(name = "typejob_id")
     private TypeJob typeJob;
-
-
 }
