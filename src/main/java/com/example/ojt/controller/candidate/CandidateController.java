@@ -1,15 +1,8 @@
 package com.example.ojt.controller.candidate;
-
 import com.example.ojt.exception.CustomException;
-import com.example.ojt.model.dto.mapper.HttpResponse;
-import com.example.ojt.model.dto.mapper.PageDataDTO;
-import com.example.ojt.model.dto.mapper.ResponseMapper;
 import com.example.ojt.model.dto.request.CandidateRequestDTO;
 import com.example.ojt.model.dto.response.APIResponse;
-import com.example.ojt.model.dto.response.CandidateResponseDTO;
-import com.example.ojt.model.entity.Candidate;
 import com.example.ojt.service.candidate.ICandidateService;
-import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -56,4 +49,5 @@ public class CandidateController {
     public ResponseEntity<?> getCandidate() throws CustomException {
         return new ResponseEntity<>(candidateService.getCandidate(), HttpStatus.CREATED);
     }
+
 }

@@ -17,4 +17,5 @@ public interface IEduCandidateService {
     Page<EducationCandidateResponseDTO> findAllWithPaginationAndSort(Pageable pageable);
 
     Page<EducationCandidateResponseDTO> searchByNameWithPaginationAndSort(Pageable pageable, String keyword);
+
 }
