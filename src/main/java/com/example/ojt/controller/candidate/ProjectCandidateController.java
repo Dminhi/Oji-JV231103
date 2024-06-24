@@ -4,18 +4,21 @@ import com.example.ojt.exception.CustomException;
 import com.example.ojt.model.dto.mapper.HttpResponse;
 import com.example.ojt.model.dto.mapper.PageDataDTO;
 import com.example.ojt.model.dto.mapper.ResponseMapper;
-import com.example.ojt.model.dto.request.EduCandidateRequestDTO;
 import com.example.ojt.model.dto.request.ProjectCandidateRequestDTO;
 import com.example.ojt.model.dto.response.APIResponse;
-import com.example.ojt.model.dto.response.CertificateCandidateResponseDTO;
 import com.example.ojt.model.dto.response.ProjectCandidateResponseDTO;
-import com.example.ojt.service.eduCandidate.IEduCandidateService;
+
 import com.example.ojt.service.productCandidate.IProductCandidateService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/api.myservice.com/v1/account/pro-candidate")
@@ -32,6 +35,7 @@ public class ProjectCandidateController {
             throw new CustomException("Lack of compulsory registration information or invalid information.", HttpStatus.UNPROCESSABLE_ENTITY);
         }
     }
+
     @PutMapping("")
     ResponseEntity<?> EditEduCandidate(@Valid @RequestBody ProjectCandidateRequestDTO projectCandidateRequestDTO) throws CustomException {
         boolean check = productCandidateService.saveOrUpdate(projectCandidateRequestDTO);
@@ -66,4 +70,5 @@ public class ProjectCandidateController {
                 proCandidate
         ), HttpStatus.OK);
     }
+
 }

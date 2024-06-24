@@ -3,14 +3,10 @@ package com.example.ojt.service.productCandidate;
 import com.example.ojt.exception.CustomException;
 import com.example.ojt.model.dto.mapper.PageDataDTO;
 import com.example.ojt.model.dto.request.ProjectCandidateRequestDTO;
-import com.example.ojt.model.dto.response.CertificateCandidateResponseDTO;
 import com.example.ojt.model.dto.response.ProjectCandidateResponseDTO;
 import com.example.ojt.model.entity.Account;
-import com.example.ojt.model.entity.CertificateCandidate;
-import com.example.ojt.model.entity.EducationCandidate;
 import com.example.ojt.model.entity.ProjectCandidate;
 import com.example.ojt.repository.IAccountRepository;
-import com.example.ojt.repository.IEduCandidateRepository;
 import com.example.ojt.repository.IProductCandidateRepository;
 import com.example.ojt.security.principle.AccountDetailsCustom;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,7 +22,7 @@ import org.springframework.stereotype.Service;
 import java.util.Objects;
 
 @Service
-public class ProductCandidateService implements IProductCandidateService {
+public class ProductCandidateService implements IProductCandidateService{
     @Autowired
     private IAccountRepository accountRepository;
     @Autowired
@@ -40,6 +36,7 @@ public class ProductCandidateService implements IProductCandidateService {
                     .orElseThrow(() -> new CustomException("Account is not found with this id " + accountDetailsCustom.getId(), HttpStatus.NOT_FOUND));
 
             if (projectCandidateRequestDTO.getId() != null) {
+             // Update existing education candidate
                 ProjectCandidate projectCandidate = productCandidateRepository.findById(projectCandidateRequestDTO.getId())
                         .orElseThrow(() -> new CustomException("Education candidate not found with this id " + projectCandidateRequestDTO.getId(), HttpStatus.NOT_FOUND));
                 projectCandidate.setName(projectCandidateRequestDTO.getName());
@@ -65,6 +62,7 @@ public class ProductCandidateService implements IProductCandidateService {
         }
         return false;
     }
+
 
     @Override
     public boolean removeProCandidate(Integer id) throws CustomException {
@@ -117,4 +115,5 @@ public class ProductCandidateService implements IProductCandidateService {
         Page<ProjectCandidate> list = productCandidateRepository.findAll(pageable);
         return list.map(ProjectCandidateResponseDTO::new);
     }
+
 }
