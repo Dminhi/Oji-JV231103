@@ -40,7 +40,6 @@ public class CandidateResponseDTO {
         this.aboutme = candidate.getAboutme();
         this.status = candidate.getStatus();
         this.createAt = candidate.getCreatedAt();
-
     }
 }
 

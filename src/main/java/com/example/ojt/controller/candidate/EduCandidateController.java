@@ -4,12 +4,9 @@ import com.example.ojt.exception.CustomException;
 import com.example.ojt.model.dto.mapper.HttpResponse;
 import com.example.ojt.model.dto.mapper.PageDataDTO;
 import com.example.ojt.model.dto.mapper.ResponseMapper;
-import com.example.ojt.model.dto.request.CandidateRequestDTO;
 import com.example.ojt.model.dto.request.EduCandidateRequestDTO;
 import com.example.ojt.model.dto.response.APIResponse;
 import com.example.ojt.model.dto.response.EducationCandidateResponseDTO;
-import com.example.ojt.model.dto.response.ProjectCandidateResponseDTO;
-import com.example.ojt.service.candidate.ICandidateService;
 import com.example.ojt.service.eduCandidate.IEduCandidateService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,26 +19,28 @@ import org.springframework.web.bind.annotation.*;
 public class EduCandidateController {
     @Autowired
     private IEduCandidateService eduCandidateService;
+
     @PostMapping("")
     ResponseEntity<?> addCandidate(@Valid @RequestBody EduCandidateRequestDTO eduCandidateRequestDTO) throws CustomException {
         boolean check = eduCandidateService.saveOrUpdate(eduCandidateRequestDTO);
-        if(check) {
+        if (check) {
             APIResponse apiResponse = new APIResponse(200, "Create Education candidate success");
             return new ResponseEntity<>(apiResponse, HttpStatus.CREATED);
-        }else {
+        } else {
             throw new CustomException("Lack of compulsory registration information or invalid information.", HttpStatus.UNPROCESSABLE_ENTITY);
         }
     }
     @PutMapping("")
-    ResponseEntity<?> EditEduCandidate(@Valid @RequestBody EduCandidateRequestDTO eduCandidateRequestDTO) throws CustomException {
+            ResponseEntity<?> EditEduCandidate(@Valid @RequestBody EduCandidateRequestDTO eduCandidateRequestDTO) throws CustomException {
         boolean check = eduCandidateService.saveOrUpdate(eduCandidateRequestDTO);
-        if(check) {
+        if (check) {
             APIResponse apiResponse = new APIResponse(200, "Update Education candidate success");
             return new ResponseEntity<>(apiResponse, HttpStatus.CREATED);
-        }else {
+        } else {
             throw new CustomException("Lack of compulsory registration information or invalid information.", HttpStatus.UNPROCESSABLE_ENTITY);
         }
     }
+
     @DeleteMapping("/remove/{id}")
     public ResponseEntity<?> removeEducationCandidate(@PathVariable Integer id) throws CustomException {
         boolean check = eduCandidateService.removeEduCandidate(id);
@@ -67,3 +66,4 @@ public class EduCandidateController {
         ), HttpStatus.OK);
     }
 }
+
