@@ -3,14 +3,10 @@ package com.example.ojt.service.experienceCandidate;
 import com.example.ojt.exception.CustomException;
 import com.example.ojt.model.dto.mapper.PageDataDTO;
 import com.example.ojt.model.dto.request.ExperienceCandidateRequestDTO;
-import com.example.ojt.model.dto.response.CertificateCandidateResponseDTO;
 import com.example.ojt.model.dto.response.ExperienceCandidateResponseDTO;
 import com.example.ojt.model.entity.Account;
-import com.example.ojt.model.entity.CertificateCandidate;
-import com.example.ojt.model.entity.EducationCandidate;
 import com.example.ojt.model.entity.ExperienceCandidate;
 import com.example.ojt.repository.IAccountRepository;
-import com.example.ojt.repository.IEduCandidateRepository;
 import com.example.ojt.repository.IExperienceCandidateRepository;
 import com.example.ojt.security.principle.AccountDetailsCustom;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,7 +18,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
-
 import java.util.Objects;
 
 @Service
@@ -119,4 +114,5 @@ public class ExperienceCandidateService implements IExperienceCandidateService {
         Page<ExperienceCandidate> list = experienceCandidateRepository.findAll(pageable);
         return list.map(ExperienceCandidateResponseDTO::new);
     }
+
 }

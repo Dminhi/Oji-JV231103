@@ -4,19 +4,19 @@ import com.example.ojt.exception.CustomException;
 import com.example.ojt.model.dto.mapper.HttpResponse;
 import com.example.ojt.model.dto.mapper.PageDataDTO;
 import com.example.ojt.model.dto.mapper.ResponseMapper;
-import com.example.ojt.model.dto.request.EduCandidateRequestDTO;
 import com.example.ojt.model.dto.request.ExperienceCandidateRequestDTO;
-import com.example.ojt.model.dto.request.ProjectCandidateRequestDTO;
 import com.example.ojt.model.dto.response.APIResponse;
 import com.example.ojt.model.dto.response.ExperienceCandidateResponseDTO;
-import com.example.ojt.model.dto.response.ProjectCandidateResponseDTO;
-import com.example.ojt.service.eduCandidate.IEduCandidateService;
 import com.example.ojt.service.experienceCandidate.IExperienceCandidateService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/api.myservice.com/v1/account/ex-candidate")
@@ -71,4 +71,5 @@ public class ExperienceCandidateController {
                 exCandidate
         ), HttpStatus.OK);
     }
+
 }
