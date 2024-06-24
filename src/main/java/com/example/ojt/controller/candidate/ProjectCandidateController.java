@@ -4,10 +4,19 @@ import com.example.ojt.exception.CustomException;
 import com.example.ojt.model.dto.mapper.HttpResponse;
 import com.example.ojt.model.dto.mapper.PageDataDTO;
 import com.example.ojt.model.dto.mapper.ResponseMapper;
+<<<<<<< HEAD
 import com.example.ojt.model.dto.request.ProjectCandidateRequestDTO;
 import com.example.ojt.model.dto.response.APIResponse;
 import com.example.ojt.model.dto.response.ProjectCandidateResponseDTO;
 
+=======
+import com.example.ojt.model.dto.request.EduCandidateRequestDTO;
+import com.example.ojt.model.dto.request.ProjectCandidateRequestDTO;
+import com.example.ojt.model.dto.response.APIResponse;
+import com.example.ojt.model.dto.response.CertificateCandidateResponseDTO;
+import com.example.ojt.model.dto.response.ProjectCandidateResponseDTO;
+import com.example.ojt.service.eduCandidate.IEduCandidateService;
+>>>>>>> 8118358 (CRUD)
 import com.example.ojt.service.productCandidate.IProductCandidateService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -69,5 +78,8 @@ public class ProjectCandidateController {
                 proCandidate
         ), HttpStatus.OK);
     }
+<<<<<<< HEAD
 
+=======
+>>>>>>> 8118358 (CRUD)
 }

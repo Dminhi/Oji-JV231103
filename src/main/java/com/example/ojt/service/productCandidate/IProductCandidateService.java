@@ -17,5 +17,4 @@ public interface IProductCandidateService {
 
     Page<ProjectCandidateResponseDTO> searchByNameWithPaginationAndSort(Pageable pageable, String keyword);
 
-
 }

@@ -22,7 +22,7 @@ import org.springframework.stereotype.Service;
 import java.util.Objects;
 
 @Service
-public class ProductCandidateService implements IProductCandidateService{
+public class ProductCandidateService implements IProductCandidateService {
     @Autowired
     private IAccountRepository accountRepository;
     @Autowired
@@ -36,7 +36,6 @@ public class ProductCandidateService implements IProductCandidateService{
                     .orElseThrow(() -> new CustomException("Account is not found with this id " + accountDetailsCustom.getId(), HttpStatus.NOT_FOUND));
 
             if (projectCandidateRequestDTO.getId() != null) {
-             // Update existing education candidate
                 ProjectCandidate projectCandidate = productCandidateRepository.findById(projectCandidateRequestDTO.getId())
                         .orElseThrow(() -> new CustomException("Education candidate not found with this id " + projectCandidateRequestDTO.getId(), HttpStatus.NOT_FOUND));
                 projectCandidate.setName(projectCandidateRequestDTO.getName());
@@ -62,8 +61,6 @@ public class ProductCandidateService implements IProductCandidateService{
         }
         return false;
     }
-
-
     @Override
     public boolean removeProCandidate(Integer id) throws CustomException {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();

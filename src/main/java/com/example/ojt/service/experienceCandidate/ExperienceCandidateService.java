@@ -20,6 +20,8 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import java.util.Objects;
 
+import java.util.Objects;
+
 @Service
 public class ExperienceCandidateService implements IExperienceCandidateService {
     @Autowired
@@ -114,5 +116,4 @@ public class ExperienceCandidateService implements IExperienceCandidateService {
         Page<ExperienceCandidate> list = experienceCandidateRepository.findAll(pageable);
         return list.map(ExperienceCandidateResponseDTO::new);
     }
-
 }
