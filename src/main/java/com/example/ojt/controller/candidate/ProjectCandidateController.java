@@ -1,9 +1,14 @@
 package com.example.ojt.controller.candidate;
 
 import com.example.ojt.exception.CustomException;
+import com.example.ojt.model.dto.mapper.HttpResponse;
+import com.example.ojt.model.dto.mapper.PageDataDTO;
+import com.example.ojt.model.dto.mapper.ResponseMapper;
 import com.example.ojt.model.dto.request.EduCandidateRequestDTO;
 import com.example.ojt.model.dto.request.ProjectCandidateRequestDTO;
 import com.example.ojt.model.dto.response.APIResponse;
+import com.example.ojt.model.dto.response.CertificateCandidateResponseDTO;
+import com.example.ojt.model.dto.response.ProjectCandidateResponseDTO;
 import com.example.ojt.service.eduCandidate.IEduCandidateService;
 import com.example.ojt.service.productCandidate.IProductCandidateService;
 import jakarta.validation.Valid;
@@ -36,5 +41,29 @@ public class ProjectCandidateController {
         }else {
             throw new CustomException("Lack of compulsory registration information or invalid information.", HttpStatus.UNPROCESSABLE_ENTITY);
         }
+    }
+    @DeleteMapping("/remove/{id}")
+    public ResponseEntity<?> removeProjectCandidate(@PathVariable Integer id) throws CustomException {
+        boolean check = productCandidateService.removeProCandidate(id);
+        if (check) {
+            APIResponse apiResponse = new APIResponse(200, "Delete Project success");
+            return new ResponseEntity<>(apiResponse, HttpStatus.CREATED);
+        } else {
+            throw new CustomException("Lack of compulsory registration information or invalid information.", HttpStatus.UNPROCESSABLE_ENTITY);
+        }
+    }
+    @GetMapping("")
+    public ResponseEntity<?> getProCandidate(@RequestParam(name = "keyword", required = false) String keyword,
+                                             @RequestParam(defaultValue = "5", name = "limit") int limit,
+                                             @RequestParam(defaultValue = "0", name = "page") int page,
+                                             @RequestParam(defaultValue = "id", name = "sort") String sort,
+                                             @RequestParam(defaultValue = "asc", name = "order") String order) throws CustomException {
+        PageDataDTO<ProjectCandidateResponseDTO> proCandidate = productCandidateService.getProCandidate(keyword, page, limit, sort, order);
+        return new ResponseEntity<>(new ResponseMapper<>(
+                HttpResponse.SUCCESS,
+                HttpStatus.OK.value(),
+                HttpStatus.OK.name(),
+                proCandidate
+        ), HttpStatus.OK);
     }
 }
