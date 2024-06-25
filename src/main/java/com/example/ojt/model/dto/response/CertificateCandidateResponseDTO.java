@@ -28,6 +28,4 @@ public class CertificateCandidateResponseDTO {
         this.info = certificateCandidate.getInfo();
         this.status = certificateCandidate.getStatus();
     }
-
-
 }

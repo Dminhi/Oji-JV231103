@@ -4,18 +4,9 @@ import com.example.ojt.exception.CustomException;
 import com.example.ojt.model.dto.mapper.HttpResponse;
 import com.example.ojt.model.dto.mapper.PageDataDTO;
 import com.example.ojt.model.dto.mapper.ResponseMapper;
-<<<<<<< HEAD
 import com.example.ojt.model.dto.request.EduCandidateRequestDTO;
 import com.example.ojt.model.dto.response.APIResponse;
 import com.example.ojt.model.dto.response.EducationCandidateResponseDTO;
-=======
-import com.example.ojt.model.dto.request.CandidateRequestDTO;
-import com.example.ojt.model.dto.request.EduCandidateRequestDTO;
-import com.example.ojt.model.dto.response.APIResponse;
-import com.example.ojt.model.dto.response.EducationCandidateResponseDTO;
-import com.example.ojt.model.dto.response.ProjectCandidateResponseDTO;
-import com.example.ojt.service.candidate.ICandidateService;
->>>>>>> 8118358 (CRUD)
 import com.example.ojt.service.eduCandidate.IEduCandidateService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -49,10 +40,7 @@ public class EduCandidateController {
             throw new CustomException("Lack of compulsory registration information or invalid information.", HttpStatus.UNPROCESSABLE_ENTITY);
         }
     }
-<<<<<<< HEAD
 
-=======
->>>>>>> 8118358 (CRUD)
     @DeleteMapping("/remove/{id}")
     public ResponseEntity<?> removeEducationCandidate(@PathVariable Integer id) throws CustomException {
         boolean check = eduCandidateService.removeEduCandidate(id);

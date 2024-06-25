@@ -4,16 +4,8 @@ import com.example.ojt.exception.CustomException;
 import com.example.ojt.model.dto.mapper.HttpResponse;
 import com.example.ojt.model.dto.mapper.PageDataDTO;
 import com.example.ojt.model.dto.mapper.ResponseMapper;
-<<<<<<< HEAD
 import com.example.ojt.model.dto.response.APIResponse;
 import com.example.ojt.model.dto.response.CertificateCandidateResponseDTO;
-
-=======
-import com.example.ojt.model.dto.request.CandidateRequestDTO;
-import com.example.ojt.model.dto.request.EduCandidateRequestDTO;
-import com.example.ojt.model.dto.response.APIResponse;
-import com.example.ojt.model.dto.response.CertificateCandidateResponseDTO;
->>>>>>> 8118358 (CRUD)
 import com.example.ojt.model.entity.CertificateCandidate;
 import com.example.ojt.service.cerCandidate.ICertificateCandidateService;
 import jakarta.validation.Valid;
@@ -74,8 +66,4 @@ public class CertificateCandidateController {
                 cerCandidatePage
         ), HttpStatus.OK);
     }
-<<<<<<< HEAD
-
-=======
->>>>>>> 8118358 (CRUD)
 }
