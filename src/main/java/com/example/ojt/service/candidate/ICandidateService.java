@@ -13,8 +13,6 @@ public interface ICandidateService {
     boolean saveOrUpdate(CandidateRequestDTO candidateRequestDTO) throws CustomException;
 
     boolean removeCandidate(Integer id) throws CustomException;
-
-
    CandidateResponseDTO getCandidate() throws CustomException;
 
 }
