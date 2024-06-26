@@ -29,23 +29,10 @@ public class ProductCandidateService implements IProductCandidateService {
     private IProductCandidateRepository productCandidateRepository;
 
     @Override
-    public boolean saveOrUpdate(ProjectCandidateRequestDTO projectCandidateRequestDTO) throws CustomException {
+    public boolean save(ProjectCandidateRequestDTO projectCandidateRequestDTO) throws CustomException {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication.getPrincipal() instanceof AccountDetailsCustom accountDetailsCustom) {
-            Account account = accountRepository.findById(accountDetailsCustom.getId())
-                    .orElseThrow(() -> new CustomException("Account is not found with this id " + accountDetailsCustom.getId(), HttpStatus.NOT_FOUND));
-
-            if (projectCandidateRequestDTO.getId() != null) {
-                ProjectCandidate projectCandidate = productCandidateRepository.findById(projectCandidateRequestDTO.getId())
-                        .orElseThrow(() -> new CustomException("Education candidate not found with this id " + projectCandidateRequestDTO.getId(), HttpStatus.NOT_FOUND));
-                projectCandidate.setName(projectCandidateRequestDTO.getName());
-                projectCandidate.setLink(projectCandidateRequestDTO.getLink());
-                projectCandidate.setStartAt(projectCandidateRequestDTO.getStartAt());
-                projectCandidate.setEndAt(projectCandidateRequestDTO.getEndAt());
-                projectCandidate.setInfo(projectCandidateRequestDTO.getInfo());
-                projectCandidate.setStatus(1);
-                productCandidateRepository.save(projectCandidate);
-            } else {
+            Account account = accountRepository.findById(accountDetailsCustom.getId()).orElseThrow(() -> new CustomException("Account is not found with this id " + accountDetailsCustom.getId(), HttpStatus.NOT_FOUND));
                 // Save new education candidate
                 ProjectCandidate projectCandidate = new ProjectCandidate();
                 projectCandidate.setName(projectCandidateRequestDTO.getName());
@@ -53,21 +40,41 @@ public class ProductCandidateService implements IProductCandidateService {
                 projectCandidate.setStartAt(projectCandidateRequestDTO.getStartAt());
                 projectCandidate.setEndAt(projectCandidateRequestDTO.getEndAt());
                 projectCandidate.setInfo(projectCandidateRequestDTO.getInfo());
-                projectCandidate.setStatus(1);
+                projectCandidate.setStatus(true);
                 projectCandidate.setCandidate(account.getCandidate());
                 productCandidateRepository.save(projectCandidate);
-            }
             return true;
         }
         return false;
     }
+
+    @Override
+    public boolean update(ProjectCandidateRequestDTO projectCandidateRequestDTO, Integer id) throws CustomException {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication.getPrincipal() instanceof AccountDetailsCustom accountDetailsCustom) {
+            Account account = accountRepository.findById(accountDetailsCustom.getId())
+                    .orElseThrow(() -> new CustomException("Account is not found with this id " + accountDetailsCustom.getId(), HttpStatus.NOT_FOUND));
+                ProjectCandidate projectCandidate = productCandidateRepository.findById(id)
+                        .orElseThrow(() -> new CustomException("Education candidate not found with this id " +id, HttpStatus.NOT_FOUND));
+                projectCandidate.setName(projectCandidateRequestDTO.getName());
+                projectCandidate.setLink(projectCandidateRequestDTO.getLink());
+                projectCandidate.setStartAt(projectCandidateRequestDTO.getStartAt());
+                projectCandidate.setEndAt(projectCandidateRequestDTO.getEndAt());
+                projectCandidate.setInfo(projectCandidateRequestDTO.getInfo());
+                projectCandidate.setStatus(true);
+                productCandidateRepository.save(projectCandidate);
+            return true;
+        }
+        return false;
+    }
+
     @Override
     public boolean removeProCandidate(Integer id) throws CustomException {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication.getPrincipal() instanceof AccountDetailsCustom accountDetailsCustom) {
             ProjectCandidate projectCandidate = productCandidateRepository.findById(id).orElseThrow(() -> new CustomException("Certificate Candidate not found with this id " + id, HttpStatus.NOT_FOUND));
             if (Objects.equals(projectCandidate.getCandidate().getAccount().getId(), accountDetailsCustom.getId())) {
-                projectCandidate.setStatus(2);
+                projectCandidate.setStatus(false);
                 productCandidateRepository.save(projectCandidate);
                 return true;
             }
@@ -109,7 +116,7 @@ public class ProductCandidateService implements IProductCandidateService {
 
     @Override
     public Page<ProjectCandidateResponseDTO> searchByNameWithPaginationAndSort(Pageable pageable, String keyword) {
-        Page<ProjectCandidate> list = productCandidateRepository.findAll(pageable);
+        Page<ProjectCandidate> list = productCandidateRepository.findByName(pageable,keyword);
         return list.map(ProjectCandidateResponseDTO::new);
     }
 

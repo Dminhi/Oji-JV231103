@@ -1,15 +1,13 @@
-package com.example.ojt.controller.company;
+package com.example.ojt.controller.admin;
 
 import com.example.ojt.exception.CustomException;
 import com.example.ojt.model.dto.mapper.HttpResponse;
 import com.example.ojt.model.dto.mapper.PageDataDTO;
 import com.example.ojt.model.dto.mapper.ResponseMapper;
-import com.example.ojt.model.dto.request.EduCandidateRequestDTO;
-import com.example.ojt.model.dto.request.TypeCompanyRequestDTO;
+import com.example.ojt.model.dto.request.LocationRequestDTO;
 import com.example.ojt.model.dto.response.APIResponse;
-import com.example.ojt.model.dto.response.EducationCandidateResponseDTO;
-import com.example.ojt.model.dto.response.TypeCompanyResponse;
-import com.example.ojt.service.typeCompany.ITypeCompanyService;
+import com.example.ojt.model.dto.response.LocationResponse;
+import com.example.ojt.service.location.ILocationService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -17,26 +15,25 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/api.myservice.com/v1/admin/typeCompany")
-public class TypeCompanyController {
+@RequestMapping("/api.myservice.com/v1/admin/location")
+public class LocationController {
     @Autowired
-    private ITypeCompanyService typeCompanyService;
-
+    private ILocationService locationService;
     @RequestMapping("")
-    public ResponseEntity<?> addTypeCompany(@Valid @RequestBody TypeCompanyRequestDTO typeCompanyRequestDTO) throws CustomException {
-        boolean check = typeCompanyService.saveOrUpdate(typeCompanyRequestDTO);
+    public ResponseEntity<?> addLocation(@Valid @RequestBody LocationRequestDTO locationRequestDTO) throws CustomException {
+        boolean check = locationService.save(locationRequestDTO);
         if (check) {
-            APIResponse apiResponse = new APIResponse(200, "Create Type Company success");
+            APIResponse apiResponse = new APIResponse(200, "Create Location success");
             return new ResponseEntity<>(apiResponse, HttpStatus.CREATED);
         } else {
             throw new CustomException("Lack of compulsory registration information or invalid information.", HttpStatus.UNPROCESSABLE_ENTITY);
         }
     }
-    @PutMapping("")
-    ResponseEntity<?> EditTypeCompany(@Valid @RequestBody TypeCompanyRequestDTO typeCompanyRequestDTO) throws CustomException {
-        boolean check = typeCompanyService.saveOrUpdate(typeCompanyRequestDTO);
+    @PutMapping("/{id}")
+    ResponseEntity<?> EditLocation(@Valid @RequestBody @PathVariable Integer id, LocationRequestDTO locationRequestDTO) throws CustomException {
+        boolean check = locationService.update(locationRequestDTO,id);
         if (check) {
-            APIResponse apiResponse = new APIResponse(200, "Update Type Company success");
+            APIResponse apiResponse = new APIResponse(200, "Update Location success");
             return new ResponseEntity<>(apiResponse, HttpStatus.CREATED);
         } else {
             throw new CustomException("Lack of compulsory registration information or invalid information.", HttpStatus.UNPROCESSABLE_ENTITY);
@@ -44,22 +41,22 @@ public class TypeCompanyController {
     }
 
     @DeleteMapping("/remove/{id}")
-    public ResponseEntity<?> removeEducationCandidate(@PathVariable Integer id) throws CustomException {
-        boolean check = typeCompanyService.removeTypeCompany(id);
+    public ResponseEntity<?> removeLocation(@PathVariable Integer id) throws CustomException {
+        boolean check = locationService.removeLocation(id);
         if (check) {
-            APIResponse apiResponse = new APIResponse(200, "Delete Type Company success");
+            APIResponse apiResponse = new APIResponse(200, "Delete Location success");
             return new ResponseEntity<>(apiResponse, HttpStatus.CREATED);
         } else {
             throw new CustomException("Lack of compulsory registration information or invalid information.", HttpStatus.UNPROCESSABLE_ENTITY);
         }
     }
     @GetMapping("")
-    public ResponseEntity<?> getProCandidate(@RequestParam(name = "keyword", required = false) String keyword,
+    public ResponseEntity<?> getLocation(@RequestParam(name = "keyword", required = false) String keyword,
                                              @RequestParam(defaultValue = "5", name = "limit") int limit,
                                              @RequestParam(defaultValue = "0", name = "page") int page,
                                              @RequestParam(defaultValue = "id", name = "sort") String sort,
                                              @RequestParam(defaultValue = "asc", name = "order") String order) throws CustomException {
-        PageDataDTO<TypeCompanyResponse> typeCompany = typeCompanyService.getTypeCompany(keyword, page, limit, sort, order);
+        PageDataDTO<LocationResponse> typeCompany = locationService.getLocation(keyword, page, limit, sort, order);
         return new ResponseEntity<>(new ResponseMapper<>(
                 HttpResponse.SUCCESS,
                 HttpStatus.OK.value(),
@@ -67,5 +64,4 @@ public class TypeCompanyController {
                 typeCompany
         ), HttpStatus.OK);
     }
-
 }

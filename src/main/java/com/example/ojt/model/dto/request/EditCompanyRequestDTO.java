@@ -14,7 +14,6 @@ import org.springframework.web.multipart.MultipartFile;
 @Getter
 @Setter
 public class EditCompanyRequestDTO {
-    private Integer id;
     @NotEmpty(message = "Please fill nameCompany!")
     private String nameCompany;
     @NotEmpty(message = "Please fill phone!")

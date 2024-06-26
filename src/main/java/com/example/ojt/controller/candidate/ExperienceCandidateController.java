@@ -19,14 +19,14 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/api.myservice.com/v1/account/ex-candidate")
+@RequestMapping("/api.myservice.com/v1/account/candidate/ex-candidate")
 public class ExperienceCandidateController {
     @Autowired
     private IExperienceCandidateService experienceCandidateService;
 
     @PostMapping("")
-    ResponseEntity<?> addCandidate(@Valid @RequestBody ExperienceCandidateRequestDTO experienceCandidateRequestDTO) throws CustomException {
-        boolean check = experienceCandidateService.saveOrUpdate(experienceCandidateRequestDTO);
+    ResponseEntity<?> addExCandidate(@Valid @RequestBody ExperienceCandidateRequestDTO experienceCandidateRequestDTO) throws CustomException {
+        boolean check = experienceCandidateService.save(experienceCandidateRequestDTO);
         if (check) {
             APIResponse apiResponse = new APIResponse(200, "Create Experience candidate success");
             return new ResponseEntity<>(apiResponse, HttpStatus.CREATED);
@@ -35,9 +35,9 @@ public class ExperienceCandidateController {
         }
     }
 
-    @PutMapping("")
-    ResponseEntity<?> EditEduCandidate(@Valid @RequestBody ExperienceCandidateRequestDTO experienceCandidateRequestDTO) throws CustomException {
-        boolean check = experienceCandidateService.saveOrUpdate(experienceCandidateRequestDTO);
+    @PutMapping("/{id}")
+    ResponseEntity<?> EditEduCandidate(@Valid @PathVariable Integer id,@RequestBody ExperienceCandidateRequestDTO experienceCandidateRequestDTO) throws CustomException {
+        boolean check = experienceCandidateService.update(experienceCandidateRequestDTO,id);
         if (check) {
             APIResponse apiResponse = new APIResponse(200, "Update Experience candidate success");
             return new ResponseEntity<>(apiResponse, HttpStatus.CREATED);

@@ -22,7 +22,7 @@ public class CandidateResponseDTO {
     private String position;
     private String avatar;
     private String aboutme;
-    private Integer status;
+    private boolean status;
     private Date createAt = new Date();
     public CandidateResponseDTO (Candidate candidate) {
         this.name = candidate.getName();
@@ -35,7 +35,7 @@ public class CandidateResponseDTO {
         this.position = candidate.getPosition();
         this.avatar = candidate.getAvatar();
         this.aboutme = candidate.getAboutme();
-        this.status = candidate.getStatus();
+        this.status = candidate.isStatus();
         this.createAt = candidate.getCreatedAt();
     }
 }

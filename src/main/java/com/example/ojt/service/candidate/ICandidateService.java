@@ -10,7 +10,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 public interface ICandidateService {
-    boolean saveOrUpdate(CandidateRequestDTO candidateRequestDTO) throws CustomException;
+    boolean saveOrUpdate(CandidateRequestDTO candidateRequestDTO, Integer id) throws CustomException;
+    boolean save(CandidateRequestDTO candidateRequestDTO) throws CustomException;
 
     boolean removeCandidate(Integer id) throws CustomException;
    CandidateResponseDTO getCandidate() throws CustomException;

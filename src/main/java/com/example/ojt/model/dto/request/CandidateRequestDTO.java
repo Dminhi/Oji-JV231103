@@ -15,7 +15,6 @@ import java.util.Date;
 @Setter
 @Builder
 public class CandidateRequestDTO {
-    private Integer id;
 
     @NotEmpty(message = "Please fill Name!")
     private String name;
@@ -47,7 +46,7 @@ public class CandidateRequestDTO {
     private String aboutme;
 
     @NotNull(message = "Account is mandatory!")
-    private Integer status = 1;
+    private boolean status = true;
 
     private Date createAt = new Date();
 }

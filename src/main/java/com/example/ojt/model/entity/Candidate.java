@@ -15,7 +15,7 @@ public class Candidate {
     private Integer id;
     @Column(name = "name", columnDefinition = "VARCHAR(50)")
     private String name;
-    private int status;
+    private boolean status;
     @Column(name = "birthday", columnDefinition = "VARCHAR(20)")
     private String birthday;
     private String address;

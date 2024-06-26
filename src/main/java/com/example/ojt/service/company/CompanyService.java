@@ -64,8 +64,8 @@ public class CompanyService implements ICompanyService {
     }
 
     @Override
-    public boolean update(EditCompanyRequestDTO companyRequestDTO) throws CustomException {
-        Company company1 = findById(companyRequestDTO.getId());
+    public boolean update(EditCompanyRequestDTO companyRequestDTO, Integer id) throws CustomException {
+        Company company1 = findById(id);
         if(companyRepository.existsByName(companyRequestDTO.getNameCompany()) && !company1.getName().equalsIgnoreCase(companyRequestDTO.getNameCompany())) {
             throw new CustomException("Name company exist", HttpStatus.CONFLICT);
         }
@@ -89,7 +89,7 @@ public class CompanyService implements ICompanyService {
                     .orElseThrow(() -> new CustomException("Account is not found with this id " + accountDetailsCustom.getId(), HttpStatus.NOT_FOUND));
 
             Company company = Company.builder()
-                    .id(companyRequestDTO.getId())
+                    .id(id)
                     .name(companyRequestDTO.getNameCompany())
                     .logo(fileName)
                     .website(companyRequestDTO.getWebsite())

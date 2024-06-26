@@ -2,6 +2,7 @@ package com.example.ojt.service.cerCandidate;
 
 import com.example.ojt.exception.CustomException;
 import com.example.ojt.model.dto.mapper.PageDataDTO;
+import com.example.ojt.model.dto.request.CertificateCandidateRequestDTO;
 import com.example.ojt.model.dto.response.CertificateCandidateResponseDTO;
 import com.example.ojt.model.entity.Account;
 import com.example.ojt.model.entity.CertificateCandidate;
@@ -21,7 +22,7 @@ import org.springframework.stereotype.Service;
 import java.util.Objects;
 
 @Service
-public class CertificateCandidateService implements ICertificateCandidateService{
+public class CertificateCandidateService implements ICertificateCandidateService {
 
     @Autowired
     private IAccountRepository accountRepository;
@@ -29,36 +30,43 @@ public class CertificateCandidateService implements ICertificateCandidateService
     private ICertificateCandidateRepository certificateCandidateRepository;
 
     @Override
-    public boolean saveOrUpdate(CertificateCandidate certificateCandidate) throws CustomException {
+    public boolean save(CertificateCandidateRequestDTO certificateCandidateRequestDTO) throws CustomException {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication.getPrincipal() instanceof AccountDetailsCustom accountDetailsCustom) {
             Account account = accountRepository.findById(accountDetailsCustom.getId())
                     .orElseThrow(() -> new CustomException("Account is not found with this id " + accountDetailsCustom.getId(), HttpStatus.NOT_FOUND));
+            // add new existing education candidate
+            CertificateCandidate certificateCandidate1 = new CertificateCandidate();
+            certificateCandidate1.setName(certificateCandidateRequestDTO.getName());
+            certificateCandidate1.setOrganization(certificateCandidateRequestDTO.getOrganization());
+            certificateCandidate1.setStartAt(certificateCandidateRequestDTO.getStartAt());
+            certificateCandidate1.setEndAt(certificateCandidateRequestDTO.getEndAt());
+            certificateCandidate1.setInfo(certificateCandidateRequestDTO.getInfo());
+            certificateCandidate1.setStatus(true);
+            certificateCandidate1.setCandidate(account.getCandidate());
+            certificateCandidateRepository.save(certificateCandidate1);
+            return true;
+        }
+        return false;
+    }
 
-            if (certificateCandidate.getId() != null) {
+    @Override
+    public boolean update(CertificateCandidateRequestDTO certificateCandidateRequestDTO, Integer id) throws CustomException {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication.getPrincipal() instanceof AccountDetailsCustom accountDetailsCustom) {
+            Account account = accountRepository.findById(accountDetailsCustom.getId())
+                    .orElseThrow(() -> new CustomException("Account is not found with this id " + accountDetailsCustom.getId(), HttpStatus.NOT_FOUND));
                 // Update existing education candidate
-                CertificateCandidate certificateCandidate1 = certificateCandidateRepository.findById(certificateCandidate.getId())
-                        .orElseThrow(() -> new CustomException("Education candidate not found with this id " + certificateCandidate.getId(), HttpStatus.NOT_FOUND));
+                CertificateCandidate certificateCandidate1 = certificateCandidateRepository.findById(id)
+                        .orElseThrow(() -> new CustomException("Education candidate not found with this id " + id, HttpStatus.NOT_FOUND));
+                certificateCandidate1.setName(certificateCandidateRequestDTO.getName());
+                certificateCandidate1.setOrganization(certificateCandidateRequestDTO.getOrganization());
+                certificateCandidate1.setStartAt(certificateCandidateRequestDTO.getStartAt());
+                certificateCandidate1.setEndAt(certificateCandidateRequestDTO.getEndAt());
+                certificateCandidate1.setInfo(certificateCandidateRequestDTO.getInfo());
+                certificateCandidate1.setStatus(true);
+                certificateCandidateRepository.save(certificateCandidate1);
 
-                certificateCandidate1.setName(certificateCandidate.getName());
-                certificateCandidate1.setOrganization(certificateCandidate.getOrganization());
-                certificateCandidate1.setStartAt(certificateCandidate.getStartAt());
-                certificateCandidate1.setEndAt(certificateCandidate.getEndAt());
-                certificateCandidate1.setInfo(certificateCandidate.getInfo());
-                certificateCandidate1.setStatus(1);
-                certificateCandidateRepository.save(certificateCandidate1);
-            } else {
-                // Save new education candidate
-                CertificateCandidate certificateCandidate1 = new CertificateCandidate();
-                certificateCandidate1.setName(certificateCandidate.getName());
-                certificateCandidate1.setOrganization(certificateCandidate.getOrganization());
-                certificateCandidate1.setStartAt(certificateCandidate.getStartAt());
-                certificateCandidate1.setEndAt(certificateCandidate.getEndAt());
-                certificateCandidate1.setInfo(certificateCandidate.getInfo());
-                certificateCandidate1.setStatus(1);
-                certificateCandidate1.setCandidate(account.getCandidate());
-                certificateCandidateRepository.save(certificateCandidate1);
-            }
             return true;
         }
         return false;
@@ -70,7 +78,7 @@ public class CertificateCandidateService implements ICertificateCandidateService
         if (authentication.getPrincipal() instanceof AccountDetailsCustom accountDetailsCustom) {
             CertificateCandidate certificateCandidate = certificateCandidateRepository.findById(id).orElseThrow(() -> new CustomException("Certificate Candidate not found with this id " + id, HttpStatus.NOT_FOUND));
             if (Objects.equals(certificateCandidate.getCandidate().getAccount().getId(), accountDetailsCustom.getId())) {
-                certificateCandidate.setStatus(2);
+                certificateCandidate.setStatus(false);
                 certificateCandidateRepository.save(certificateCandidate);
                 return true;
             }
@@ -112,8 +120,9 @@ public class CertificateCandidateService implements ICertificateCandidateService
 
     @Override
     public Page<CertificateCandidateResponseDTO> searchByNameWithPaginationAndSort(Pageable pageable, String keyword) {
-        Page<CertificateCandidate> list = certificateCandidateRepository.findAll(pageable);
+        Page<CertificateCandidate> list = certificateCandidateRepository.findByName(pageable,keyword);
         return list.map(CertificateCandidateResponseDTO::new);
     }
+
 
 }

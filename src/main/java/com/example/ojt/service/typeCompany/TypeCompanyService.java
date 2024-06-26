@@ -28,14 +28,7 @@ public class TypeCompanyService implements ITypeCompanyService {
     private ITypeCompanyRepository typeCompanyRepository;
 
     @Override
-    public boolean saveOrUpdate(TypeCompanyRequestDTO typeCompanyRequestDTO) throws CustomException {
-        if (typeCompanyRequestDTO.getId() != null) {
-            // edit type Company
-            TypeCompany typeCompany = typeCompanyRepository.findById(typeCompanyRequestDTO.getId())
-                    .orElseThrow(() -> new CustomException("TypeCompany not found with this id " + typeCompanyRequestDTO.getId(), HttpStatus.NOT_FOUND));
-            typeCompany.setName(typeCompanyRequestDTO.getName());
-            typeCompanyRepository.save(typeCompany);
-        } else {
+    public boolean save(TypeCompanyRequestDTO typeCompanyRequestDTO) throws CustomException {
             // Save new type company
             // check name
             if (typeCompanyRepository.findByName(typeCompanyRequestDTO.getName()).isPresent()) {
@@ -44,7 +37,17 @@ public class TypeCompanyService implements ITypeCompanyService {
             TypeCompany typeCompany = new TypeCompany();
             typeCompany.setName(typeCompanyRequestDTO.getName());
             typeCompanyRepository.save(typeCompany);
-        }
+        return true;
+    }
+    @Override
+    public boolean update(TypeCompanyRequestDTO typeCompanyRequestDTO,Integer id) throws CustomException {
+
+            // edit type Company
+            TypeCompany typeCompany = typeCompanyRepository.findById(id)
+                    .orElseThrow(() -> new CustomException("TypeCompany not found with this id " + id, HttpStatus.NOT_FOUND));
+            typeCompany.setName(typeCompanyRequestDTO.getName());
+            typeCompanyRepository.save(typeCompany);
+
         return true;
     }
 
@@ -75,7 +78,7 @@ public class TypeCompanyService implements ITypeCompanyService {
 
     @Override
     public Page<TypeCompanyResponse> searchByNameWithPaginationAndSort(Pageable pageable, String keyword) {
-        Page<TypeCompany> list = typeCompanyRepository.findAllByNameContainingIgnoreCase(pageable, keyword);
+        Page<TypeCompany> list = typeCompanyRepository.findAllByNameType(pageable, keyword);
         return list.map(TypeCompanyResponse::new);
     }
 

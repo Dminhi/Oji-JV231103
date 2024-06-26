@@ -18,18 +18,17 @@ public class Job {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
-
     private String title;
     @Column(columnDefinition = "LONGTEXT")
     private String description;
     @Column(columnDefinition = "LONGTEXT")
     private String requirements;
-    private String salary;
+    private Integer salaryFrom;
+    private Integer salaryTo;
     @Column(name = "expire_at", columnDefinition = "VARCHAR(20)")
-    private String expireAt;
-    private Timestamp createdAt;
+    private Date expireAt;
+    private Date createdAt;
     private int status;
-
     @ManyToOne
     @JoinColumn(name = "company_id")
     private Company company;

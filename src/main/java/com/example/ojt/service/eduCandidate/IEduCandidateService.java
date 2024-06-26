@@ -8,7 +8,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 public interface IEduCandidateService {
-    boolean saveOrUpdate(EduCandidateRequestDTO eduCandidateRequestDTO) throws CustomException;
+    boolean update(EduCandidateRequestDTO eduCandidateRequestDTO,Integer id) throws CustomException;
 
     boolean removeEduCandidate(Integer id) throws CustomException;
 
@@ -17,4 +17,6 @@ public interface IEduCandidateService {
     Page<EducationCandidateResponseDTO> findAllWithPaginationAndSort(Pageable pageable);
 
     Page<EducationCandidateResponseDTO> searchByNameWithPaginationAndSort(Pageable pageable, String keyword);
+
+    boolean save(EduCandidateRequestDTO eduCandidateRequestDTO) throws CustomException;
 }

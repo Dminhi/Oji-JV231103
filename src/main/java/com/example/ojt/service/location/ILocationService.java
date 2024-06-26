@@ -10,7 +10,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 public interface ILocationService {
-    boolean saveOrUpdate(LocationRequestDTO locationRequestDTO) throws CustomException;
+    boolean save(LocationRequestDTO locationRequestDTO) throws CustomException;
+    boolean update(LocationRequestDTO locationRequestDTO,Integer id) throws CustomException;
 
     PageDataDTO<LocationResponse> getLocation(String keyword, int page, int limit, String sort, String order) throws CustomException;
 

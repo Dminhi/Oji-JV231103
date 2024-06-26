@@ -8,7 +8,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 public interface IExperienceCandidateService {
-    boolean saveOrUpdate(ExperienceCandidateRequestDTO experienceCandidateRequestDTO) throws CustomException;
+    boolean save(ExperienceCandidateRequestDTO experienceCandidateRequestDTO) throws CustomException;
+    boolean update(ExperienceCandidateRequestDTO experienceCandidateRequestDTO,Integer id) throws CustomException;
 
     boolean removeExCandidate(Integer id) throws CustomException;
 

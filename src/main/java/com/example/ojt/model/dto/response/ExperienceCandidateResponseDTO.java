@@ -7,6 +7,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.Date;
+
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
@@ -14,16 +16,16 @@ import lombok.Setter;
 public class ExperienceCandidateResponseDTO {
     private String company;
     private String position;
-    private String startAt;
-    private String endAt;
+    private Date startAt;
+    private Date endAt;
     private String info;
-    private int status;
+    private boolean status;
     public ExperienceCandidateResponseDTO (ExperienceCandidate experienceCandidate) {
         this.company = experienceCandidate.getCompany();
         this.position = experienceCandidate.getPosition();
         this.startAt = experienceCandidate.getStartAt();
         this.endAt = experienceCandidate.getEndAt();
         this.info = experienceCandidate.getInfo();
-        this.status = experienceCandidate.getStatus();
+        this.status = experienceCandidate.isStatus();
     }
 }

@@ -33,17 +33,9 @@ public class CandidateService implements ICandidateService {
     private IAccountRepository accountRepository;
 
     @Override
-    public boolean saveOrUpdate(CandidateRequestDTO candidateRequestDTO) throws CustomException {
+    public boolean saveOrUpdate(CandidateRequestDTO candidateRequestDTO, Integer id) throws CustomException {
         String fileName;
-        if (candidateRequestDTO.getId() == null) {
-            // addCandidate
-            // check image
-            if (candidateRequestDTO.getAvatar() == null || candidateRequestDTO.getAvatar().getSize() == 0) {
-                throw new CustomException("File image is not found", HttpStatus.NOT_FOUND);
-            }
-            fileName = uploadService.uploadFileToServer(candidateRequestDTO.getAvatar());
-        } else {
-            CandidateResponseDTO candidateResponseDTO = findById(candidateRequestDTO.getId());
+            CandidateResponseDTO candidateResponseDTO = findById(id);
             // updateCandidate
             // kiểm tra có upload ảnh không
             if (candidateRequestDTO.getAvatar() != null && candidateRequestDTO.getAvatar().getSize() > 0) {
@@ -51,7 +43,7 @@ public class CandidateService implements ICandidateService {
             } else {
                 fileName = candidateResponseDTO.getAvatar();
             }
-        }
+
 
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication.getPrincipal() instanceof AccountDetailsCustom accountDetailsCustom) {
@@ -59,9 +51,47 @@ public class CandidateService implements ICandidateService {
                     .orElseThrow(() -> new CustomException("Account is not found with this id " + accountDetailsCustom.getId(), HttpStatus.NOT_FOUND));
 
             Candidate candidate = Candidate.builder()
-                    .id(candidateRequestDTO.getId())
+                    .id(id)
                     .name(candidateRequestDTO.getName())
-                    .status(candidateRequestDTO.getStatus())
+                    .status(candidateRequestDTO.isStatus())
+                    .birthday(candidateRequestDTO.getBirthday())
+                    .address(candidateRequestDTO.getAddress())
+                    .phone(candidateRequestDTO.getPhone())
+                    .gender(candidateRequestDTO.getGender())
+                    .linkLinkedin(candidateRequestDTO.getLinkLinkedin())
+                    .linkGit(candidateRequestDTO.getLinkGit())
+                    .position(candidateRequestDTO.getPosition())
+                    .createdAt(candidateRequestDTO.getCreateAt())
+                    .updatedAt(new Date())
+                    .avatar(fileName)
+                    .aboutme(candidateRequestDTO.getAboutme())
+                    .account(account)
+                    .build();
+
+            candidateRepository.save(candidate);
+            return true;
+        } else {
+            throw new CustomException("Principal is not an instance of AccountDetailsCustom", HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @Override
+    public boolean save(CandidateRequestDTO candidateRequestDTO) throws CustomException {
+        String fileName;
+            // addCandidate
+            // check image
+            if (candidateRequestDTO.getAvatar() == null || candidateRequestDTO.getAvatar().getSize() == 0) {
+                throw new CustomException("File image is not found", HttpStatus.NOT_FOUND);
+            }
+            fileName = uploadService.uploadFileToServer(candidateRequestDTO.getAvatar());
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication.getPrincipal() instanceof AccountDetailsCustom accountDetailsCustom) {
+            Account account = accountRepository.findById(accountDetailsCustom.getId())
+                    .orElseThrow(() -> new CustomException("Account is not found with this id " + accountDetailsCustom.getId(), HttpStatus.NOT_FOUND));
+
+            Candidate candidate = Candidate.builder()
+                    .name(candidateRequestDTO.getName())
+                    .status(candidateRequestDTO.isStatus())
                     .birthday(candidateRequestDTO.getBirthday())
                     .address(candidateRequestDTO.getAddress())
                     .phone(candidateRequestDTO.getPhone())
@@ -92,7 +122,7 @@ public class CandidateService implements ICandidateService {
                     .orElseThrow(() -> new CustomException("Account is not found with this id " + accountDetailsCustom.getId(), HttpStatus.NOT_FOUND));
             Candidate candidate = account.getCandidate();
             if (Objects.equals(candidate.getId(), id)) {
-                candidate.setStatus(2);
+                candidate.setStatus(false);
                 candidateRepository.save(candidate);
                 return true;
             }

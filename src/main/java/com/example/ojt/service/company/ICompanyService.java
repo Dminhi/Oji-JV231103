@@ -7,5 +7,5 @@ import com.example.ojt.model.dto.request.EditCompanyRequestDTO;
 public interface ICompanyService {
     boolean save(CompanyRequestDTO companyRequestDTO) throws CustomException;
 
-    boolean update(EditCompanyRequestDTO companyRequestDTO) throws CustomException;
+    boolean update(EditCompanyRequestDTO companyRequestDTO,Integer id) throws CustomException;
 }

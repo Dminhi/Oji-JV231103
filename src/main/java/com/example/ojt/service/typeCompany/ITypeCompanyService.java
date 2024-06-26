@@ -8,7 +8,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 public interface ITypeCompanyService {
-    boolean saveOrUpdate(TypeCompanyRequestDTO typeCompanyRequestDTO) throws CustomException;
+    boolean save(TypeCompanyRequestDTO typeCompanyRequestDTO) throws CustomException;
+    boolean update(TypeCompanyRequestDTO typeCompanyRequestDTO,Integer id) throws CustomException;
 
     PageDataDTO<TypeCompanyResponse> getTypeCompany(String keyword, int page, int limit, String sort, String order) throws CustomException;
 
