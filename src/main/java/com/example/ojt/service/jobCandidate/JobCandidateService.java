@@ -10,7 +10,6 @@ import com.example.ojt.repository.IAccountRepository;
 import com.example.ojt.repository.IJobCandidateRepository;
 import com.example.ojt.repository.JobRepository;
 import com.example.ojt.security.principle.AccountDetailsCustom;
-import jakarta.validation.constraints.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -21,7 +20,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
-import java.util.Date;
+
 import java.util.Objects;
 
 @Service

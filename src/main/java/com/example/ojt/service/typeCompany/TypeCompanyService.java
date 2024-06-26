@@ -3,24 +3,17 @@ package com.example.ojt.service.typeCompany;
 import com.example.ojt.exception.CustomException;
 import com.example.ojt.model.dto.mapper.PageDataDTO;
 import com.example.ojt.model.dto.request.TypeCompanyRequestDTO;
-import com.example.ojt.model.dto.response.EducationCandidateResponseDTO;
 import com.example.ojt.model.dto.response.TypeCompanyResponse;
-import com.example.ojt.model.entity.EducationCandidate;
 import com.example.ojt.model.entity.TypeCompany;
-import com.example.ojt.repository.IAccountRepository;
 import com.example.ojt.repository.ITypeCompanyRepository;
-import com.example.ojt.security.principle.AccountDetailsCustom;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
-import java.util.Objects;
 
 @Service
 public class TypeCompanyService implements ITypeCompanyService {

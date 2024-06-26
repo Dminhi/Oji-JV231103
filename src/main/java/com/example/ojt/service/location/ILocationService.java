@@ -3,9 +3,7 @@ package com.example.ojt.service.location;
 import com.example.ojt.exception.CustomException;
 import com.example.ojt.model.dto.mapper.PageDataDTO;
 import com.example.ojt.model.dto.request.LocationRequestDTO;
-import com.example.ojt.model.dto.request.TypeCompanyRequestDTO;
 import com.example.ojt.model.dto.response.LocationResponse;
-import com.example.ojt.model.dto.response.TypeCompanyResponse;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 

@@ -4,7 +4,6 @@ import com.example.ojt.exception.CustomException;
 import com.example.ojt.model.dto.mapper.PageDataDTO;
 import com.example.ojt.model.dto.request.LeveJobRequestDTO;
 import com.example.ojt.model.dto.response.LevelJobResponse;
-import com.example.ojt.model.dto.response.LocationResponse;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 

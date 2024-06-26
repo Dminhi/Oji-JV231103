@@ -4,7 +4,6 @@ import com.example.ojt.exception.CustomException;
 import com.example.ojt.model.dto.mapper.PageDataDTO;
 import com.example.ojt.model.dto.request.AddressCompanyRequestDTO;
 import com.example.ojt.model.dto.response.AddressCompanyResponseDTO;
-import com.example.ojt.model.dto.response.EducationCandidateResponseDTO;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 

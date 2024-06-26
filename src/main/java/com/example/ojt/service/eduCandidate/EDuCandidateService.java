@@ -4,13 +4,9 @@ import com.example.ojt.exception.CustomException;
 import com.example.ojt.model.dto.mapper.PageDataDTO;
 import com.example.ojt.model.dto.request.EduCandidateRequestDTO;
 
-import com.example.ojt.model.dto.response.CertificateCandidateResponseDTO;
 import com.example.ojt.model.dto.response.EducationCandidateResponseDTO;
-import com.example.ojt.model.dto.response.ProjectCandidateResponseDTO;
 import com.example.ojt.model.entity.Account;
-import com.example.ojt.model.entity.CertificateCandidate;
 import com.example.ojt.model.entity.EducationCandidate;
-import com.example.ojt.model.entity.ProjectCandidate;
 import com.example.ojt.repository.IAccountRepository;
 import com.example.ojt.repository.IEduCandidateRepository;
 import com.example.ojt.security.principle.AccountDetailsCustom;

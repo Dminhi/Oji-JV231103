@@ -7,7 +7,6 @@ import com.example.ojt.model.dto.mapper.ResponseMapper;
 import com.example.ojt.model.dto.request.CertificateCandidateRequestDTO;
 import com.example.ojt.model.dto.response.APIResponse;
 import com.example.ojt.model.dto.response.CertificateCandidateResponseDTO;
-import com.example.ojt.model.entity.CertificateCandidate;
 import com.example.ojt.service.cerCandidate.ICertificateCandidateService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
