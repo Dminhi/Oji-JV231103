@@ -3,13 +3,20 @@ package com.example.ojt.service.job;
 import com.example.ojt.config.LocalDateFormatter;
 import com.example.ojt.config.StringToInteger;
 import com.example.ojt.exception.CustomException;
+import com.example.ojt.model.dto.mapper.PageDataDTO;
 import com.example.ojt.model.dto.request.JobRequestDTO;
 import com.example.ojt.model.dto.request.LeveJobRequestDTO;
 import com.example.ojt.model.dto.request.TypeJobRequestDTO;
+import com.example.ojt.model.dto.response.JobCandidateResponseDTO;
+import com.example.ojt.model.dto.response.JobListResponseDTO;
 import com.example.ojt.model.entity.*;
 import com.example.ojt.repository.*;
 import com.example.ojt.security.principle.AccountDetailsCustom;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -38,6 +45,7 @@ public class JobService implements IJobService {
     private ILeveJobRepository leveJobRepository;
     @Autowired
     private ILevelsJobsRepository levelsJobsRepository;
+    private PageDataDTO<JobListResponseDTO> pageDataDTO;
 
     @Override
     @Transactional
@@ -48,7 +56,9 @@ public class JobService implements IJobService {
             // Find the account by ID
             Account account = accountRepository.findById(accountDetailsCustom.getId())
                     .orElseThrow(() -> new CustomException("Account is not found with this id " + accountDetailsCustom.getId(), HttpStatus.NOT_FOUND));
-
+            if(account.getCompany().getDescription() == null) {
+                throw new CustomException("Update company before add Job",HttpStatus.BAD_REQUEST);
+            }
             // Helper to convert String to Integer
             StringToInteger stringToInteger = new StringToInteger();
 
@@ -66,6 +76,7 @@ public class JobService implements IJobService {
                     .expireAt(jobRequestDTO.getExpireAt())
                     .salaryFrom(stringToInteger.parse(jobRequestDTO.getSalaryFrom()))
                     .salaryTo(stringToInteger.parse(jobRequestDTO.getSalaryTo()))
+                    .company(account.getCompany())
                     .createdAt(new Date())
                     .status(1)
                     .build();
@@ -212,6 +223,48 @@ public class JobService implements IJobService {
             return true;
         }
         return false;
+    }
+
+    @Override
+    public Job findById(Integer id) throws CustomException {
+        return jobRepository.findById(id).orElseThrow(()->new CustomException("Job not found with id " + id,HttpStatus.NOT_FOUND));
+    }
+
+    @Override
+    public Page<JobListResponseDTO> findAllWithPaginationAndSort(Pageable pageable) {
+        Page<Job> list = jobRepository.findAll(pageable);
+        return list.map(JobListResponseDTO::new);
+    }
+
+    @Override
+    public Page<JobListResponseDTO> searchByNameWithPaginationAndSort(Pageable pageable, String keyword) {
+        Page<Job> list = jobRepository.findByName(pageable,keyword);
+        return list.map(JobListResponseDTO::new);
+    }
+
+    @Override
+    public PageDataDTO<JobListResponseDTO> getJob(String keyword, int page, int limit, String sort, String order) throws CustomException {
+        Sort.Direction direction = order.equalsIgnoreCase("desc") ? Sort.Direction.DESC : Sort.Direction.ASC;
+        Pageable pageable = PageRequest.of(page, limit, Sort.by(direction, sort));
+        Page<JobListResponseDTO> jobListResponseDTOS;
+        if (keyword != null && !keyword.isEmpty()) {
+            jobListResponseDTOS = searchByNameWithPaginationAndSort(pageable, keyword);
+        } else {
+            jobListResponseDTOS = findAllWithPaginationAndSort(pageable);
+        }
+        if (jobListResponseDTOS == null || jobListResponseDTOS.isEmpty()) {
+            throw new CustomException("Job  is not found", HttpStatus.NOT_FOUND);
+
+        }
+        PageDataDTO<JobListResponseDTO> pageDataDTO = new PageDataDTO<>();
+        pageDataDTO.setCurrentPage(jobListResponseDTOS.getNumber());
+        pageDataDTO.setTotalPage(jobListResponseDTOS.getTotalPages());
+        pageDataDTO.setLimit(jobListResponseDTOS.getSize());
+        pageDataDTO.setSort(sort);
+        pageDataDTO.setTotalElement(jobListResponseDTOS.getTotalElements());
+        pageDataDTO.setSearchName(keyword == null ? "" : keyword);
+        pageDataDTO.setContent(jobListResponseDTOS.getContent());
+        return pageDataDTO;
     }
 
 }

@@ -11,8 +11,8 @@ import lombok.*;
 public class CompanyRequestDTO {
     @NotEmpty(message = "Please fill nameCompany!")
     private String nameCompany;
-    @NotEmpty(message = "Please fill location!")
-    private String location;
+//    @NotEmpty(message = "Please fill location!")
+//    private String location;
     @NotEmpty(message = "Please fill phone!")
     private String phone;
     @NotEmpty(message = "Please fill email!")

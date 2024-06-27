@@ -19,7 +19,6 @@ import org.springframework.web.bind.annotation.*;
 public class EduCandidateController {
     @Autowired
     private IEduCandidateService eduCandidateService;
-
     @PostMapping("")
     ResponseEntity<?> addCandidate(@Valid @RequestBody EduCandidateRequestDTO eduCandidateRequestDTO) throws CustomException {
         boolean check = eduCandidateService.save(eduCandidateRequestDTO);

@@ -8,19 +8,28 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.Set;
+import java.util.stream.Collectors;
+
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
 @Setter
 public class CompanyResponseDTO {
+    private Integer id;
     private String nameCompany;
     private String logo;
-    private String phone;
-    private String email;
-    public CompanyResponseDTO (Company company) {
+    private Set<AddressCompanyResponseDTO> addressCompanyResponseDTOSet;
+    private String typeCompany;
+    private Integer listPosition;
+
+    public CompanyResponseDTO(Company company) {
+        this.id = company.getId();
         this.nameCompany = company.getName();
         this.logo = company.getLogo();
-        this.phone = company.getPhone();
-        this.email = company.getEmailCompany();
+        this.typeCompany = company.getTypeCompany().getName();
+        this.addressCompanyResponseDTOSet = company.getAddressCompanySet().stream().map(AddressCompanyResponseDTO::new).collect(Collectors.toSet());
+        this.listPosition = (int) company.getJobs().stream().filter(job -> job.getStatus() == 1).count();
     }
+
 }

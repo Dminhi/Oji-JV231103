@@ -44,4 +44,7 @@ public class Company {
     @OneToMany(mappedBy = "company")
     @JsonIgnore
     private Set<AddressCompany> addressCompanySet;
+    @OneToMany(mappedBy = "company")
+    @JsonIgnore
+    private Set<Job> jobs;
 }

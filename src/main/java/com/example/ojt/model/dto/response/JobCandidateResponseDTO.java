@@ -1,29 +1,39 @@
 package com.example.ojt.model.dto.response;
 
 import com.example.ojt.model.entity.JobCandidates;
-import com.fasterxml.jackson.annotation.JsonFormat;
-import jakarta.validation.constraints.NotEmpty;
-import jakarta.validation.constraints.NotNull;
+import com.example.ojt.model.entity.TypesJobs;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.util.Date;
+import java.util.HashSet;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
 @Setter
 public class JobCandidateResponseDTO {
-    private String cvUrl;
-    private Date interviewDay;
-    private String jobName;
+    private Integer id;
     private String content;
-    public JobCandidateResponseDTO (JobCandidates jobCandidates) {
-        this.cvUrl = jobCandidates.getCvUrl();
-        this.interviewDay = jobCandidates.getInterviewDay();
-        this.jobName = jobCandidates.getJob().getTitle();
-        this.content = jobCandidates.getContent();
+    private int salaryFrom;
+    private int salaryTo;
+    private String requirements;
+    private Date interview;
+    private Set<TypesJobsResponse> typesJobsResponses;
+    private String address;
+    private String companyName;
+    private String candidateName;
+    public JobCandidateResponseDTO(JobCandidates jobCandidates) {
+        this.id = jobCandidates.getId();
+      this.content = jobCandidates.getContent();
+      this.salaryFrom = jobCandidates.getJob().getSalaryFrom();
+      this.salaryTo = jobCandidates.getJob().getSalaryTo();
+      this.typesJobsResponses = jobCandidates.getJob().getTypesJobsSet().stream().map(TypesJobsResponse::new).collect(Collectors.toSet());
+      this.address = jobCandidates.getJob().getAddressCompany().getAddress();
+      this.companyName = jobCandidates.getJob().getCompany().getName();
     }
 }

@@ -3,6 +3,7 @@ package com.example.ojt.service.jobCandidate;
 import com.example.ojt.exception.CustomException;
 import com.example.ojt.model.dto.mapper.PageDataDTO;
 import com.example.ojt.model.dto.request.JobCandidateRequestDTO;
+import com.example.ojt.model.dto.response.JobCandidateListResponseDTO;
 import com.example.ojt.model.dto.response.JobCandidateResponseDTO;
 import com.example.ojt.model.entity.Account;
 import com.example.ojt.model.entity.JobCandidates;
@@ -110,6 +111,11 @@ public class JobCandidateService implements IJobCandidateService {
         pageDataDTO.setSearchName(keyword == null ? "" : keyword);
         pageDataDTO.setContent(jobCandidateResponseDTOS.getContent());
         return pageDataDTO;
+    }
+
+    @Override
+    public JobCandidates findById(Integer id) throws CustomException {
+       return jobCandidateRepository.findById(id).orElseThrow(()->new CustomException("JobCandidate not found with id " + id,HttpStatus.NOT_FOUND));
     }
 
     @Override

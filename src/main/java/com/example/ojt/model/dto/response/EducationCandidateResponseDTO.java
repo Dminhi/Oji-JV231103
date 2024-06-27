@@ -16,16 +16,10 @@ import java.util.Date;
 public class EducationCandidateResponseDTO {
     private String nameEducation;
     private String major;
-    private Date startAt;
-    private Date endAt;
     private String info;
-    private boolean status;
     public EducationCandidateResponseDTO (EducationCandidate educationCandidate) {
         this.nameEducation = educationCandidate.getNameEducation();
         this.major = educationCandidate.getMajor();
-        this.startAt = educationCandidate.getStartAt();
-        this.endAt = educationCandidate.getEndAt();
         this.info = educationCandidate.getInfo();
-        this.status = educationCandidate.isStatus();
     }
 }

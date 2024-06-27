@@ -36,4 +36,8 @@ public class Job {
     @ManyToOne
     @JoinColumn(name = "address_company_id")
     private AddressCompany addressCompany;
+    @OneToMany(mappedBy = "job")
+    @JsonIgnore
+    private Set<TypesJobs> typesJobsSet;
+
 }

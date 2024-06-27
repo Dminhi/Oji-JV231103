@@ -16,16 +16,10 @@ import java.util.Date;
 public class ExperienceCandidateResponseDTO {
     private String company;
     private String position;
-    private Date startAt;
-    private Date endAt;
     private String info;
-    private boolean status;
     public ExperienceCandidateResponseDTO (ExperienceCandidate experienceCandidate) {
         this.company = experienceCandidate.getCompany();
         this.position = experienceCandidate.getPosition();
-        this.startAt = experienceCandidate.getStartAt();
-        this.endAt = experienceCandidate.getEndAt();
         this.info = experienceCandidate.getInfo();
-        this.status = experienceCandidate.isStatus();
     }
 }

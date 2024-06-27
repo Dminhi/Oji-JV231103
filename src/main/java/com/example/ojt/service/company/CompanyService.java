@@ -1,13 +1,20 @@
 package com.example.ojt.service.company;
 
 import com.example.ojt.exception.CustomException;
+import com.example.ojt.model.dto.mapper.PageDataDTO;
 import com.example.ojt.model.dto.request.CompanyRequestDTO;
 import com.example.ojt.model.dto.request.EditCompanyRequestDTO;
+import com.example.ojt.model.dto.response.CompanyResponseDTO;
+import com.example.ojt.model.dto.response.SkillCandidateResponse;
 import com.example.ojt.model.entity.*;
 import com.example.ojt.repository.*;
 import com.example.ojt.security.principle.AccountDetailsCustom;
 import com.example.ojt.service.UploadService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -37,8 +44,8 @@ public class CompanyService implements ICompanyService {
             Account account = accountRepository.findById(accountDetailsCustom.getId())
                     .orElseThrow(() -> new CustomException("Account is not found with this id " + accountDetailsCustom.getId(), HttpStatus.NOT_FOUND));
 
-            Location location = locationRepository.findByNameCity(companyRequestDTO.getLocation())
-                    .orElseThrow(() -> new CustomException("Location is not found with this name " + companyRequestDTO.getLocation(), HttpStatus.NOT_FOUND));
+//            Location location = locationRepository.findByNameCity(companyRequestDTO.getLocation())
+//                    .orElseThrow(() -> new CustomException("Location is not found with this name " + companyRequestDTO.getLocation(), HttpStatus.NOT_FOUND));
 
             // Check for duplicate company based on unique constraints
             if (companyRepository.existsByName(companyRequestDTO.getNameCompany())) {
@@ -48,16 +55,17 @@ public class CompanyService implements ICompanyService {
                 throw new CustomException("Company with email " + companyRequestDTO.getEmail() + " already exists", HttpStatus.CONFLICT);
             }
 
-            AddressCompany addressCompany = new AddressCompany();
-            addressCompany.setLocation(location);
+//            AddressCompany addressCompany = new AddressCompany();
+//            addressCompany.setLocation(location);
             Company company = new Company();
             company.setName(companyRequestDTO.getNameCompany());
             company.setEmailCompany(companyRequestDTO.getEmail());
             company.setPhone(companyRequestDTO.getPhone());
             company.setAccount(account);
+            company.setCreatedAt(new Date());
             companyRepository.save(company);
-            addressCompany.setCompany(company);
-            addressRepository.save(addressCompany);
+//            addressCompany.setCompany(company);
+//            addressRepository.save(addressCompany);
             return true;
         }
         return false;
@@ -66,20 +74,20 @@ public class CompanyService implements ICompanyService {
     @Override
     public boolean update(EditCompanyRequestDTO companyRequestDTO, Integer id) throws CustomException {
         Company company1 = findById(id);
-        if(companyRepository.existsByName(companyRequestDTO.getNameCompany()) && !company1.getName().equalsIgnoreCase(companyRequestDTO.getNameCompany())) {
+        if (companyRepository.existsByName(companyRequestDTO.getNameCompany()) && !company1.getName().equalsIgnoreCase(companyRequestDTO.getNameCompany())) {
             throw new CustomException("Name company exist", HttpStatus.CONFLICT);
         }
-        if(companyRepository.existsByEmailCompany(companyRequestDTO.getEmail()) && !company1.getEmailCompany().equalsIgnoreCase(companyRequestDTO.getEmail())) {
+        if (companyRepository.existsByEmailCompany(companyRequestDTO.getEmail()) && !company1.getEmailCompany().equalsIgnoreCase(companyRequestDTO.getEmail())) {
             throw new CustomException("Email company exist", HttpStatus.CONFLICT);
         }
-        if(companyRepository.existsByPhone(companyRequestDTO.getPhone()) && !company1.getPhone().equalsIgnoreCase(companyRequestDTO.getPhone())) {
+        if (companyRepository.existsByPhone(companyRequestDTO.getPhone()) && !company1.getPhone().equalsIgnoreCase(companyRequestDTO.getPhone())) {
             throw new CustomException("Phone company exist", HttpStatus.CONFLICT);
         }
         String fileName;
         // update Company
         // kiểm tra có upload ảnh không
         if (companyRequestDTO.getLogo() != null && companyRequestDTO.getLogo().getSize() > 0) {
-             fileName = uploadService.uploadFileToServer(companyRequestDTO.getLogo());
+            fileName = uploadService.uploadFileToServer(companyRequestDTO.getLogo());
         } else {
             fileName = company1.getLogo();
         }
@@ -108,7 +116,7 @@ public class CompanyService implements ICompanyService {
                     .addressCompanySet(company1.getAddressCompanySet())
                     .policy(companyRequestDTO.getPolicy())
                     .account(account)
-                    .typeCompany(typeCompanyRepository.findByName(companyRequestDTO.getTypeCompany()).orElseThrow(()->new CustomException("type Company is not founed with name " + companyRequestDTO.getTypeCompany(),HttpStatus.NOT_FOUND)))
+                    .typeCompany(typeCompanyRepository.findByName(companyRequestDTO.getTypeCompany()).orElseThrow(() -> new CustomException("type Company is not founed with name " + companyRequestDTO.getTypeCompany(), HttpStatus.NOT_FOUND)))
                     .build();
             companyRepository.save(company);
             return true;
@@ -116,9 +124,49 @@ public class CompanyService implements ICompanyService {
             throw new CustomException("Principal is not an instance of AccountDetailsCustom", HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
-    private Company findById(Integer id) throws CustomException {
-        return  companyRepository.findById(id)
+
+
+    @Override
+    public Company findById(Integer id) throws CustomException {
+        return companyRepository.findById(id)
                 .orElseThrow(() -> new CustomException("Company is not found with this id " + id, HttpStatus.NOT_FOUND));
 
+    }
+
+    @Override
+    public PageDataDTO<CompanyResponseDTO> getCompany(String keyword, int page, int limit, String sort, String order) throws CustomException {
+        Sort.Direction direction = order.equalsIgnoreCase("desc") ? Sort.Direction.DESC : Sort.Direction.ASC;
+        Pageable pageable = PageRequest.of(page, limit, Sort.by(direction, sort));
+        Page<CompanyResponseDTO> companyResponseDTOS;
+        if (keyword != null && !keyword.isEmpty()) {
+            companyResponseDTOS = searchByNameWithPaginationAndSort(pageable, keyword);
+        } else {
+            companyResponseDTOS = findAllWithPaginationAndSort(pageable);
+        }
+        if (companyResponseDTOS == null || companyResponseDTOS.isEmpty()) {
+            throw new CustomException("Company  is not found", HttpStatus.NOT_FOUND);
+
+        }
+        PageDataDTO<CompanyResponseDTO> pageDataDTO = new PageDataDTO<>();
+        pageDataDTO.setCurrentPage(companyResponseDTOS.getNumber());
+        pageDataDTO.setTotalPage(companyResponseDTOS.getTotalPages());
+        pageDataDTO.setLimit(companyResponseDTOS.getSize());
+        pageDataDTO.setSort(sort);
+        pageDataDTO.setTotalElement(companyResponseDTOS.getTotalElements());
+        pageDataDTO.setSearchName(keyword == null ? "" : keyword);
+        pageDataDTO.setContent(companyResponseDTOS.getContent());
+        return pageDataDTO;
+    }
+
+    @Override
+    public Page<CompanyResponseDTO> findAllWithPaginationAndSort(Pageable pageable) {
+        Page<Company> list = companyRepository.findAll(pageable);
+        return list.map(CompanyResponseDTO::new);
+    }
+
+    @Override
+    public Page<CompanyResponseDTO> searchByNameWithPaginationAndSort(Pageable pageable, String keyword) {
+        Page<Company> list = companyRepository.findAndSort(pageable,keyword);
+        return list.map(CompanyResponseDTO::new);
     }
 }

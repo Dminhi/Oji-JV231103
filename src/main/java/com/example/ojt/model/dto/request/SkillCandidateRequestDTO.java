@@ -1,6 +1,7 @@
 package com.example.ojt.model.dto.request;
 
 import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -12,6 +13,6 @@ import lombok.Setter;
 public class SkillCandidateRequestDTO {
     @NotEmpty(message = "Please fill name!")
     private String name;
-    @NotEmpty(message = "Please fill levelJobId!")
+    @NotNull(message = "Please fill levelJobId!")
     private Integer levelJobId;
 }
