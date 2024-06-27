@@ -1,9 +1,13 @@
 package com.example.ojt.service.account;
 
 import com.example.ojt.exception.CustomException;
+import com.example.ojt.exception.NotFoundException;
+import com.example.ojt.exception.RequestErrorException;
+import com.example.ojt.model.dto.request.AccountEditPassword;
 import com.example.ojt.model.dto.request.LoginAccountRequest;
 import com.example.ojt.model.dto.request.RegisterAccount;
 import com.example.ojt.model.dto.request.RegisterAccountCompany;
+import com.example.ojt.model.dto.response.AccountResponse;
 import com.example.ojt.model.dto.response.JWTResponse;
 import com.example.ojt.model.entity.Account;
 import com.example.ojt.model.entity.Company;
@@ -125,5 +129,36 @@ public class AccountService implements IAccountService {
             return true;
         }
         return false;
+    }
+
+    @Override
+    public AccountResponse changePassword(AccountEditPassword accountEditPassword) throws RequestErrorException, NotFoundException {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        AccountDetailsCustom accountDetailsCustom = (AccountDetailsCustom) authentication.getPrincipal();
+        Account account = accountRepository.findById(accountDetailsCustom.getId()).orElseThrow(() -> new NotFoundException("email not found"));
+        if (!passwordEncoder.matches(accountEditPassword.getOldPassword(),account.getPassword())) {
+            throw new RequestErrorException("old password wrong");
+        }
+        account.setPassword(passwordEncoder.encode(accountEditPassword.getNewPassWord()));
+        accountRepository.save(account);
+        return toUserResponse(account);
+    }
+
+
+    @Override
+    public void updatePassword(String email, String newPassword) throws NotFoundException {
+        Account account = accountRepository.findByEmail(email).orElseThrow(()->new NotFoundException("Account not found with this email : "+email));;
+        account.setPassword(passwordEncoder.encode(newPassword));
+        accountRepository.save(account);
+    }
+
+    public static AccountResponse toUserResponse(Account account) {
+        if (account == null) {
+            return null; // Nếu user là null, trả về null để tránh lỗi
+        }
+        // Sử dụng Builder của UserResponse để tạo một đối tượng mới
+        return AccountResponse.builder()
+                .email(account.getEmail())
+                .build();
     }
 }

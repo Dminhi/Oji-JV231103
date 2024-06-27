@@ -5,6 +5,7 @@ import org.springframework.security.core.GrantedAuthority;
 
 import java.util.Collection;
 
+
 @NoArgsConstructor
 @AllArgsConstructor
 @Setter
@@ -15,6 +16,8 @@ public class JWTResponse {
     private String accessToken ;
     private String email;
     private String roleName;
+    private Long accountId;
+    private Collection<? extends GrantedAuthority> roleSet;
     private Integer status;
 }
 

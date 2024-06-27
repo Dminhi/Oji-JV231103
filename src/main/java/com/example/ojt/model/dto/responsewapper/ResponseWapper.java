@@ -10,8 +10,7 @@ import lombok.Setter;
 @Getter
 @Setter
 public class ResponseWapper<T> {
-    private EHttpStatus httpStatus;
+    private Integer statusCode;
     private String message;
-    private Integer code;
     private T data;
 }
