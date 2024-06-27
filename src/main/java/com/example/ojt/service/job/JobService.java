@@ -254,7 +254,6 @@ public class JobService implements IJobService {
         }
         if (jobListResponseDTOS == null || jobListResponseDTOS.isEmpty()) {
             throw new CustomException("Job  is not found", HttpStatus.NOT_FOUND);
-
         }
         PageDataDTO<JobListResponseDTO> pageDataDTO = new PageDataDTO<>();
         pageDataDTO.setCurrentPage(jobListResponseDTOS.getNumber());

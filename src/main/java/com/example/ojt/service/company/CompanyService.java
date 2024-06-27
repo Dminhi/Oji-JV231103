@@ -62,6 +62,7 @@ public class CompanyService implements ICompanyService {
             company.setEmailCompany(companyRequestDTO.getEmail());
             company.setPhone(companyRequestDTO.getPhone());
             company.setAccount(account);
+            company.setLogo("https://img.freepik.com/free-vector/free-vector-panda-bamboo-mascot-logo_779267-1386.jpg?t=st=1719451968~exp=1719455568~hmac=f2499171ac9d6522bb5f76f54c90acd2b67bf651182b9820fc9c3bb45793ee97&w=740");
             company.setCreatedAt(new Date());
             companyRepository.save(company);
 //            addressCompany.setCompany(company);

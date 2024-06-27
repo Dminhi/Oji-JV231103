@@ -3,11 +3,14 @@ package com.example.ojt.service.account;
 import com.example.ojt.exception.CustomException;
 import com.example.ojt.model.dto.request.LoginAccountRequest;
 import com.example.ojt.model.dto.request.RegisterAccount;
+import com.example.ojt.model.dto.request.RegisterAccountCompany;
 import com.example.ojt.model.dto.response.JWTResponse;
 import com.example.ojt.model.entity.Account;
+import com.example.ojt.model.entity.Company;
 import com.example.ojt.model.entity.Role;
 import com.example.ojt.model.entity.RoleName;
 import com.example.ojt.repository.IAccountRepository;
+import com.example.ojt.repository.ICompanyRepository;
 import com.example.ojt.repository.IRoleRepository;
 import com.example.ojt.security.jwt.JWTProvider;
 import com.example.ojt.security.principle.AccountDetailsCustom;
@@ -17,8 +20,12 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.Date;
 
 @Service
 public class AccountService implements IAccountService {
@@ -32,6 +39,8 @@ public class AccountService implements IAccountService {
     private JWTProvider jwtProvider;
     @Autowired
     private IRoleRepository roleRepository;
+    @Autowired
+    private ICompanyRepository companyRepository;
     @Override
     public JWTResponse login(LoginAccountRequest loginAccountRequest) throws CustomException {
         // Xac thuc email and password
@@ -72,5 +81,49 @@ public class AccountService implements IAccountService {
                 .build();
         accountRepository.save(account);
         return true;
+    }
+
+    @Override
+    @Transactional
+    public boolean registerCompany(RegisterAccountCompany registerAccount) throws CustomException {
+        if (accountRepository.existsByEmail(registerAccount.getEmail())) {
+            throw new CustomException("Email existed!", HttpStatus.CONFLICT);
+        }
+        if (!registerAccount.getPassword().equals(registerAccount.getConfirmPassword())) {
+            throw new CustomException("Password do not match!", HttpStatus.BAD_REQUEST);
+        }
+        Role role = roleRepository.findByRoleName(RoleName.valueOf(registerAccount.getRoleName()))
+                .orElseThrow(() -> new CustomException("Role not found", HttpStatus.NOT_FOUND));
+        Account account = Account.builder()
+                .email(registerAccount.getEmail())
+                .password(passwordEncoder.encode(registerAccount.getPassword()))
+                .status(1)
+                .role(role)
+                .build();
+        accountRepository.save(account);
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication.getPrincipal() instanceof AccountDetailsCustom accountDetailsCustom) {
+            Account accountCompany = accountRepository.findById(accountDetailsCustom.getId())
+                    .orElseThrow(() -> new CustomException("Account is not found with this id " + accountDetailsCustom.getId(), HttpStatus.NOT_FOUND));
+
+            // Check for duplicate company based on unique constraints
+            if (companyRepository.existsByName(registerAccount.getNameCompany())) {
+                throw new CustomException("Company with name " + registerAccount.getNameCompany() + " already exists", HttpStatus.CONFLICT);
+            }
+            if (companyRepository.existsByEmailCompany(registerAccount.getEmail())) {
+                throw new CustomException("Company with email " + registerAccount.getEmail() + " already exists", HttpStatus.CONFLICT);
+            }
+
+            Company company = new Company();
+            company.setName(registerAccount.getNameCompany());
+            company.setEmailCompany(registerAccount.getEmail());
+            company.setPhone(registerAccount.getPhone());
+            company.setAccount(account);
+            company.setLogo("https://img.freepik.com/free-vector/free-vector-panda-bamboo-mascot-logo_779267-1386.jpg?t=st=1719451968~exp=1719455568~hmac=f2499171ac9d6522bb5f76f54c90acd2b67bf651182b9820fc9c3bb45793ee97&w=740");
+            company.setCreatedAt(new Date());
+            companyRepository.save(company);
+            return true;
+        }
+        return false;
     }
 }
