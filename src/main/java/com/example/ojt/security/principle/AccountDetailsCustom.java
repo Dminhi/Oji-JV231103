@@ -9,7 +9,6 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Set;
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -69,7 +68,7 @@ public class AccountDetailsCustom implements UserDetails {
 
     @Override
     public boolean isEnabled() {
-        return status == 1;
+        return true;
     }
     public String getRoleName() {
         return role.getRoleName().name();
