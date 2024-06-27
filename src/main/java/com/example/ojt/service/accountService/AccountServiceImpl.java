@@ -32,13 +32,16 @@ public class AccountServiceImpl implements IAccountService {
     @Autowired
     private IAccountRepository accountRepository;
 
+    @Autowired
+    private TokenService tokenService;
+
     @Override
-    public JWTResponse login(FormLogin formLogin) throws NotFoundException, AccountLockedException {
+    public JWTResponse login(FormLogin formLogin) throws AccountLockedException, RequestErrorException {
         Authentication authentication = null;
         try {
             authentication = manager.authenticate(new UsernamePasswordAuthenticationToken(formLogin.getEmail(), formLogin.getPassword()));
         } catch (AuthenticationException e) {
-            throw new NotFoundException("email or password incorrect");
+            throw new RequestErrorException("email or password incorrect");
         }
         AccountDetailsCustom detailsCustom = (AccountDetailsCustom) authentication.getPrincipal();
         if (detailsCustom.getStatus()==2) {
@@ -70,7 +73,7 @@ public class AccountServiceImpl implements IAccountService {
 
     @Override
     public void updatePassword(String email, String newPassword) throws NotFoundException {
-        Account account = accountRepository.findByEmail(email).orElseThrow(()->new NotFoundException("Account not found with this email : "+email));;
+        Account account = accountRepository.findByEmail(email).orElseThrow(()->new NotFoundException(email+" is not exist"));;
         account.setPassword(passwordEncoder.encode(newPassword));
         accountRepository.save(account);
     }

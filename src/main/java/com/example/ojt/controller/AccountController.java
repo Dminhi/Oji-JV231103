@@ -5,9 +5,7 @@ import com.example.ojt.exception.RequestErrorException;
 import com.example.ojt.model.dto.request.AccountEditPassword;
 import com.example.ojt.model.dto.response.AccountResponse;
 import com.example.ojt.model.dto.responsewapper.ResponseWapper;
-import com.example.ojt.service.accountService.EmailService;
 import com.example.ojt.service.accountService.IAccountService;
-import com.example.ojt.service.accountService.TokenService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -18,7 +16,6 @@ import org.springframework.web.bind.annotation.*;
 public class AccountController {
     @Autowired
     private IAccountService accountService;
-
 
     @PutMapping("/account/change-password")
     public ResponseEntity<?> updatePasswordAccount(@RequestBody AccountEditPassword accountEditPassword) throws NotFoundException, RequestErrorException {

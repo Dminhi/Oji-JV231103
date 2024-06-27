@@ -54,7 +54,7 @@ public class APIControllerAdvice {
         map.put("statusCode", 400);
         map.put("message", ex.getMessage());
         Map<String,Object> response = new HashMap<>();
-        response.put("Fields Error",map);
+        response.put("FieldsError",map);
         return response;
     }
 
@@ -66,7 +66,7 @@ public class APIControllerAdvice {
         map.put("statusCode", 403);
         map.put("message", e.getMessage());
         Map<String,Object> response = new HashMap<>();
-        response.put("Fields Error",map);
+        response.put("FieldsError",map);
         return response;
     }
 
@@ -79,7 +79,7 @@ public class APIControllerAdvice {
         map.put("error", "Bad Request");
 
         Map<String,Object> response = new HashMap<>();
-        response.put("Fields Error",map);
+        response.put("FieldsError",map);
         return response;
     }
 }

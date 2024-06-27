@@ -9,7 +9,7 @@ import com.example.ojt.model.dto.response.AccountResponse;
 import com.example.ojt.model.dto.response.JWTResponse;
 
 public interface IAccountService {
-    JWTResponse login(FormLogin formLogin) throws NotFoundException, AccountLockedException;
+    JWTResponse login(FormLogin formLogin) throws NotFoundException, AccountLockedException, RequestErrorException;
 
     AccountResponse changePassword(AccountEditPassword accountEditPassword) throws NotFoundException, RequestErrorException;
 
