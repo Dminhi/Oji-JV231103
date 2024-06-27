@@ -30,25 +30,11 @@ public class ExperienceCandidateService implements IExperienceCandidateService {
     private IExperienceCandidateRepository experienceCandidateRepository;
 
     @Override
-    public boolean saveOrUpdate(ExperienceCandidateRequestDTO experienceCandidateRequestDTO) throws CustomException {
+    public boolean save(ExperienceCandidateRequestDTO experienceCandidateRequestDTO) throws CustomException {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication.getPrincipal() instanceof AccountDetailsCustom accountDetailsCustom) {
             Account account = accountRepository.findById(accountDetailsCustom.getId())
                     .orElseThrow(() -> new CustomException("Account is not found with this id " + accountDetailsCustom.getId(), HttpStatus.NOT_FOUND));
-
-            if (experienceCandidateRequestDTO.getId() != null) {
-                // Update existing education candidate
-                ExperienceCandidate experienceCandidate = experienceCandidateRepository.findById(experienceCandidateRequestDTO.getId())
-                        .orElseThrow(() -> new CustomException("Education candidate not found with this id " + experienceCandidateRequestDTO.getId(), HttpStatus.NOT_FOUND));
-
-                experienceCandidate.setCompany(experienceCandidateRequestDTO.getCompany());
-                experienceCandidate.setPosition(experienceCandidateRequestDTO.getPosition());
-                experienceCandidate.setStartAt(experienceCandidateRequestDTO.getStartAt());
-                experienceCandidate.setEndAt(experienceCandidateRequestDTO.getEndAt());
-                experienceCandidate.setInfo(experienceCandidateRequestDTO.getInfo());
-                experienceCandidate.setStatus(1);
-                experienceCandidateRepository.save(experienceCandidate);
-            } else {
                 // Save new education candidate
                 ExperienceCandidate experienceCandidate = new ExperienceCandidate();
                 experienceCandidate.setCompany(experienceCandidateRequestDTO.getCompany());
@@ -56,10 +42,33 @@ public class ExperienceCandidateService implements IExperienceCandidateService {
                 experienceCandidate.setStartAt(experienceCandidateRequestDTO.getStartAt());
                 experienceCandidate.setEndAt(experienceCandidateRequestDTO.getEndAt());
                 experienceCandidate.setInfo(experienceCandidateRequestDTO.getInfo());
-                experienceCandidate.setStatus(1);
+                experienceCandidate.setStatus(true);
                 experienceCandidate.setCandidate(account.getCandidate());
                 experienceCandidateRepository.save(experienceCandidate);
-            }
+            return true;
+        }
+        return false;
+    }
+
+    @Override
+    public boolean update(ExperienceCandidateRequestDTO experienceCandidateRequestDTO,Integer id) throws CustomException {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication.getPrincipal() instanceof AccountDetailsCustom accountDetailsCustom) {
+            Account account = accountRepository.findById(accountDetailsCustom.getId())
+                    .orElseThrow(() -> new CustomException("Account is not found with this id " + accountDetailsCustom.getId(), HttpStatus.NOT_FOUND));
+
+                // Update existing education candidate
+                ExperienceCandidate experienceCandidate = experienceCandidateRepository.findById(id)
+                        .orElseThrow(() -> new CustomException("Education candidate not found with this id " + id, HttpStatus.NOT_FOUND));
+
+                experienceCandidate.setCompany(experienceCandidateRequestDTO.getCompany());
+                experienceCandidate.setPosition(experienceCandidateRequestDTO.getPosition());
+                experienceCandidate.setStartAt(experienceCandidateRequestDTO.getStartAt());
+                experienceCandidate.setEndAt(experienceCandidateRequestDTO.getEndAt());
+                experienceCandidate.setInfo(experienceCandidateRequestDTO.getInfo());
+                experienceCandidate.setStatus(true);
+                experienceCandidateRepository.save(experienceCandidate);
+
             return true;
         }
         return false;
@@ -71,7 +80,7 @@ public class ExperienceCandidateService implements IExperienceCandidateService {
         if (authentication.getPrincipal() instanceof AccountDetailsCustom accountDetailsCustom) {
             ExperienceCandidate experienceCandidate = experienceCandidateRepository.findById(id).orElseThrow(() -> new CustomException("Certificate Candidate not found with this id " + id, HttpStatus.NOT_FOUND));
             if (Objects.equals(experienceCandidate.getCandidate().getAccount().getId(), accountDetailsCustom.getId())) {
-                experienceCandidate.setStatus(2);
+                experienceCandidate.setStatus(false);
                 experienceCandidateRepository.save(experienceCandidate);
                 return true;
             }
@@ -113,7 +122,7 @@ public class ExperienceCandidateService implements IExperienceCandidateService {
 
     @Override
     public Page<ExperienceCandidateResponseDTO> searchByNameWithPaginationAndSort(Pageable pageable, String keyword) {
-        Page<ExperienceCandidate> list = experienceCandidateRepository.findAll(pageable);
+        Page<ExperienceCandidate> list = experienceCandidateRepository.findByName(pageable,keyword);
         return list.map(ExperienceCandidateResponseDTO::new);
     }
 }

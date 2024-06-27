@@ -15,14 +15,13 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/api.myservice.com/v1/account/edu-candidate")
+@RequestMapping("/api.myservice.com/v1/account/candidate/edu-candidate")
 public class EduCandidateController {
     @Autowired
     private IEduCandidateService eduCandidateService;
-
     @PostMapping("")
     ResponseEntity<?> addCandidate(@Valid @RequestBody EduCandidateRequestDTO eduCandidateRequestDTO) throws CustomException {
-        boolean check = eduCandidateService.saveOrUpdate(eduCandidateRequestDTO);
+        boolean check = eduCandidateService.save(eduCandidateRequestDTO);
         if (check) {
             APIResponse apiResponse = new APIResponse(200, "Create Education candidate success");
             return new ResponseEntity<>(apiResponse, HttpStatus.CREATED);
@@ -30,9 +29,9 @@ public class EduCandidateController {
             throw new CustomException("Lack of compulsory registration information or invalid information.", HttpStatus.UNPROCESSABLE_ENTITY);
         }
     }
-    @PutMapping("")
-            ResponseEntity<?> EditEduCandidate(@Valid @RequestBody EduCandidateRequestDTO eduCandidateRequestDTO) throws CustomException {
-        boolean check = eduCandidateService.saveOrUpdate(eduCandidateRequestDTO);
+    @PutMapping("/{id}")
+            ResponseEntity<?> EditEduCandidate(@Valid @PathVariable Integer id, @RequestBody EduCandidateRequestDTO eduCandidateRequestDTO) throws CustomException {
+        boolean check = eduCandidateService.update(eduCandidateRequestDTO,id);
         if (check) {
             APIResponse apiResponse = new APIResponse(200, "Update Education candidate success");
             return new ResponseEntity<>(apiResponse, HttpStatus.CREATED);

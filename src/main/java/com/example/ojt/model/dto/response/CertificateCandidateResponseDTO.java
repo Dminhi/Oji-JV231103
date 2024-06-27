@@ -9,6 +9,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.Date;
+
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
@@ -16,16 +18,16 @@ import lombok.Setter;
 public class CertificateCandidateResponseDTO {
     private String name;
     private String organization;
-    private String startAt;
-    private String endAt;
+    private Date startAt;
+    private Date endAt;
     private String info;
-    private int status;
+    private boolean status;
     public CertificateCandidateResponseDTO (CertificateCandidate certificateCandidate) {
         this.name = certificateCandidate.getName();
         this.organization = certificateCandidate.getOrganization();
         this.startAt = certificateCandidate.getStartAt();
         this.endAt = certificateCandidate.getEndAt();
         this.info = certificateCandidate.getInfo();
-        this.status = certificateCandidate.getStatus();
+        this.status = certificateCandidate.isStatus();
     }
 }

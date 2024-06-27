@@ -9,7 +9,7 @@ import lombok.*;
 @Setter
 @Builder
 public class LocationRequestDTO {
-    private Integer id;
+
     @NotEmpty(message = "Please fill Location!")
     private String Location;
 }

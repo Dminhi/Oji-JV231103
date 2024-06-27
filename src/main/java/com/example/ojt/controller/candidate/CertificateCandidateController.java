@@ -4,9 +4,9 @@ import com.example.ojt.exception.CustomException;
 import com.example.ojt.model.dto.mapper.HttpResponse;
 import com.example.ojt.model.dto.mapper.PageDataDTO;
 import com.example.ojt.model.dto.mapper.ResponseMapper;
+import com.example.ojt.model.dto.request.CertificateCandidateRequestDTO;
 import com.example.ojt.model.dto.response.APIResponse;
 import com.example.ojt.model.dto.response.CertificateCandidateResponseDTO;
-import com.example.ojt.model.entity.CertificateCandidate;
 import com.example.ojt.service.cerCandidate.ICertificateCandidateService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,14 +15,14 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/api.myservice.com/v1/account/cer-candidate")
+@RequestMapping("/api.myservice.com/v1/account/candidate/cer-candidate")
 public class CertificateCandidateController {
     @Autowired
     private ICertificateCandidateService certificateCandidateService;
 
     @PostMapping("")
-    ResponseEntity<?> addCandidate(@Valid @RequestBody CertificateCandidate certificateCandidate) throws CustomException {
-        boolean check = certificateCandidateService.saveOrUpdate(certificateCandidate);
+    ResponseEntity<?> addCerCandidate(@Valid @RequestBody CertificateCandidateRequestDTO certificateCandidateRequestDTO) throws CustomException {
+        boolean check = certificateCandidateService.save(certificateCandidateRequestDTO);
         if (check) {
             APIResponse apiResponse = new APIResponse(200, "Create certificate Candidate success");
             return new ResponseEntity<>(apiResponse, HttpStatus.CREATED);
@@ -31,9 +31,9 @@ public class CertificateCandidateController {
         }
     }
 
-    @PutMapping("")
-    ResponseEntity<?> EditCerEduCandidate(@Valid @RequestBody CertificateCandidate certificateCandidate) throws CustomException {
-        boolean check = certificateCandidateService.saveOrUpdate(certificateCandidate);
+    @PutMapping("/{id}")
+    ResponseEntity<?> EditCerCandidate(@Valid @PathVariable Integer id, @RequestBody CertificateCandidateRequestDTO certificateCandidateRequestDTO) throws CustomException {
+        boolean check = certificateCandidateService.update(certificateCandidateRequestDTO ,id);
         if (check) {
             APIResponse apiResponse = new APIResponse(200, "Update Certificate candidate success");
             return new ResponseEntity<>(apiResponse, HttpStatus.CREATED);

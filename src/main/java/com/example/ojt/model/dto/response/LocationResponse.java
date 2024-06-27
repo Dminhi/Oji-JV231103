@@ -12,8 +12,8 @@ import lombok.Setter;
 @Getter
 @Setter
 public class LocationResponse {
+    private Integer id;
     private String nameCity;
-
     public LocationResponse(Location location) {
         this.nameCity = location.getNameCity();
 

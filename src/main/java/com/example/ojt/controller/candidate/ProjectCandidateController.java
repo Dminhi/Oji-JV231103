@@ -19,13 +19,13 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/api.myservice.com/v1/account/pro-candidate")
+@RequestMapping("/api.myservice.com/v1/account/candidate/pro-candidate")
 public class ProjectCandidateController {
     @Autowired
     private IProductCandidateService productCandidateService;
     @PostMapping("")
     ResponseEntity<?> addCandidate(@Valid @RequestBody ProjectCandidateRequestDTO projectCandidateRequestDTO) throws CustomException {
-        boolean check = productCandidateService.saveOrUpdate(projectCandidateRequestDTO);
+        boolean check = productCandidateService.save(projectCandidateRequestDTO);
         if(check) {
             APIResponse apiResponse = new APIResponse(200, "Create Education candidate success");
             return new ResponseEntity<>(apiResponse, HttpStatus.CREATED);
@@ -34,9 +34,9 @@ public class ProjectCandidateController {
         }
     }
 
-    @PutMapping("")
-    ResponseEntity<?> EditEduCandidate(@Valid @RequestBody ProjectCandidateRequestDTO projectCandidateRequestDTO) throws CustomException {
-        boolean check = productCandidateService.saveOrUpdate(projectCandidateRequestDTO);
+    @PutMapping("/{id}")
+    ResponseEntity<?> EditEduCandidate(@Valid @PathVariable Integer id,@RequestBody ProjectCandidateRequestDTO projectCandidateRequestDTO) throws CustomException {
+        boolean check = productCandidateService.update(projectCandidateRequestDTO,id);
         if(check) {
             APIResponse apiResponse = new APIResponse(200, "Update Project candidate success");
             return new ResponseEntity<>(apiResponse, HttpStatus.CREATED);

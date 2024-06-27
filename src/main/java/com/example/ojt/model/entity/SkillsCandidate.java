@@ -25,5 +25,5 @@ public class SkillsCandidate {
     @JoinColumn(name = "leveljob_id")
     private LevelJob levelJob;
 
-    private Integer status;
+    private boolean status;
 }

@@ -15,13 +15,11 @@ public class AddressCompany {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
-
     private String address;
     private String mapUrl;
     @Column(name = "created_at", columnDefinition = "VARCHAR(20)")
     private String createdAt;
-    private int status;
-
+    private boolean status;
     @ManyToOne
     @JoinColumn(name = "company_id")
     private Company company;

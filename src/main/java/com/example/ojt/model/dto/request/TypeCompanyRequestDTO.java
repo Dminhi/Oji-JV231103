@@ -9,7 +9,6 @@ import lombok.*;
 @Setter
 @Builder
 public class TypeCompanyRequestDTO {
-    private Integer id;
     @NotEmpty(message = "Please fill Name!")
     private String Name;
 }

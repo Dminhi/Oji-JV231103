@@ -4,9 +4,7 @@ import com.example.ojt.exception.CustomException;
 import com.example.ojt.model.dto.mapper.PageDataDTO;
 import com.example.ojt.model.dto.request.LocationRequestDTO;
 import com.example.ojt.model.dto.response.LocationResponse;
-import com.example.ojt.model.dto.response.TypeCompanyResponse;
 import com.example.ojt.model.entity.Location;
-import com.example.ojt.model.entity.TypeCompany;
 import com.example.ojt.repository.ILocationRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -17,29 +15,37 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 @Service
-public class LocationService implements ILocationService{
+public class LocationService implements ILocationService {
     @Autowired
     private ILocationRepository locationRepository;
-    private Location location;
 
     @Override
-    public boolean saveOrUpdate(LocationRequestDTO locationRequestDTO) throws CustomException {
-        if (locationRequestDTO.getId() != null) {
-            // edit type Company
-            Location location = locationRepository.findById(locationRequestDTO.getId())
-                    .orElseThrow(() -> new CustomException("Location not found with this id " + locationRequestDTO.getId(), HttpStatus.NOT_FOUND));
-            location.setNameCity(locationRequestDTO.getLocation());
-            locationRepository.save(location);
-        } else {
-            // Save new type company
-            // check name
-            if (locationRepository.findByNameCity(locationRequestDTO.getLocation()).isPresent()) {
-                throw new CustomException("Location with name " + locationRequestDTO.getLocation() + " already exists", HttpStatus.CONFLICT);
-            }
-            Location location1 = new Location();
-            location1.setNameCity(locationRequestDTO.getLocation());
-            locationRepository.save(location1);
+    public boolean save(LocationRequestDTO locationRequestDTO) throws CustomException {
+        // Save new type company
+        // check name
+        if (locationRepository.findByNameCity(locationRequestDTO.getLocation()).isPresent()) {
+            throw new CustomException("Location with name " + locationRequestDTO.getLocation() + " already exists", HttpStatus.CONFLICT);
         }
+        Location location1 = new Location();
+        location1.setNameCity(locationRequestDTO.getLocation());
+        locationRepository.save(location1);
+
+        return true;
+    }
+
+    @Override
+    public boolean update(LocationRequestDTO locationRequestDTO, Integer id) throws CustomException {
+        // edit type Company
+        Location location = locationRepository.findById(id)
+                .orElseThrow(() -> new CustomException("Location not found with this id " + id, HttpStatus.NOT_FOUND));
+        // Check if the new name exists in the database and is not the same as the current name of the object
+        if (locationRepository.existsByNameCity(locationRequestDTO.getLocation()) &&
+                !location.getNameCity().equalsIgnoreCase(locationRequestDTO.getLocation())) {
+            throw new CustomException("Location is exists", HttpStatus.CONFLICT);
+        }
+        location.setNameCity(locationRequestDTO.getLocation());
+        locationRepository.save(location);
+
         return true;
     }
 
@@ -77,7 +83,7 @@ public class LocationService implements ILocationService{
 
     @Override
     public Page<LocationResponse> searchByNameWithPaginationAndSort(Pageable pageable, String keyword) {
-        Page<Location> list = locationRepository.findAllByNameCityContainingIgnoreCase(pageable, keyword);
+        Page<Location> list = locationRepository.findAllByNameLocation(pageable, keyword);
         return list.map(LocationResponse::new);
     }
 

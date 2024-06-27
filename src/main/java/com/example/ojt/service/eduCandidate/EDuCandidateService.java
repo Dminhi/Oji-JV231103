@@ -4,13 +4,9 @@ import com.example.ojt.exception.CustomException;
 import com.example.ojt.model.dto.mapper.PageDataDTO;
 import com.example.ojt.model.dto.request.EduCandidateRequestDTO;
 
-import com.example.ojt.model.dto.response.CertificateCandidateResponseDTO;
 import com.example.ojt.model.dto.response.EducationCandidateResponseDTO;
-import com.example.ojt.model.dto.response.ProjectCandidateResponseDTO;
 import com.example.ojt.model.entity.Account;
-import com.example.ojt.model.entity.CertificateCandidate;
 import com.example.ojt.model.entity.EducationCandidate;
-import com.example.ojt.model.entity.ProjectCandidate;
 import com.example.ojt.repository.IAccountRepository;
 import com.example.ojt.repository.IEduCandidateRepository;
 import com.example.ojt.security.principle.AccountDetailsCustom;
@@ -33,25 +29,11 @@ public class EDuCandidateService implements IEduCandidateService{
     @Autowired
     private IEduCandidateRepository eduCandidateRepository;
     @Override
-    public boolean saveOrUpdate(EduCandidateRequestDTO eduCandidateRequestDTO) throws CustomException {
+    public boolean save(EduCandidateRequestDTO eduCandidateRequestDTO) throws CustomException {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication.getPrincipal() instanceof AccountDetailsCustom accountDetailsCustom) {
             Account account = accountRepository.findById(accountDetailsCustom.getId())
                     .orElseThrow(() -> new CustomException("Account is not found with this id " + accountDetailsCustom.getId(), HttpStatus.NOT_FOUND));
-
-            if (eduCandidateRequestDTO.getId() != null) {
-                // Update existing education candidate
-                EducationCandidate eduCandidate = eduCandidateRepository.findById(eduCandidateRequestDTO.getId())
-                        .orElseThrow(() -> new CustomException("Education candidate not found with this id " + eduCandidateRequestDTO.getId(), HttpStatus.NOT_FOUND));
-
-                eduCandidate.setNameEducation(eduCandidateRequestDTO.getNameEducation());
-                eduCandidate.setMajor(eduCandidateRequestDTO.getMajor());
-                eduCandidate.setStartAt(eduCandidateRequestDTO.getStartAt());
-                eduCandidate.setEndAt(eduCandidateRequestDTO.getEndAt());
-                eduCandidate.setInfo(eduCandidateRequestDTO.getInfo());
-                eduCandidate.setStatus(1);
-                eduCandidateRepository.save(eduCandidate);
-            } else {
                 // Save new education candidate
                 EducationCandidate eduCandidate = new EducationCandidate();
                 eduCandidate.setNameEducation(eduCandidateRequestDTO.getNameEducation());
@@ -59,10 +41,31 @@ public class EDuCandidateService implements IEduCandidateService{
                 eduCandidate.setStartAt(eduCandidateRequestDTO.getStartAt());
                 eduCandidate.setEndAt(eduCandidateRequestDTO.getEndAt());
                 eduCandidate.setInfo(eduCandidateRequestDTO.getInfo());
-                eduCandidate.setStatus(1);
+                eduCandidate.setStatus(true);
                 eduCandidate.setCandidate(account.getCandidate());
                 eduCandidateRepository.save(eduCandidate);
-            }
+            return true;
+        }
+        return false;
+    }
+    @Override
+    public boolean update(EduCandidateRequestDTO eduCandidateRequestDTO,Integer id) throws CustomException {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication.getPrincipal() instanceof AccountDetailsCustom accountDetailsCustom) {
+            Account account = accountRepository.findById(accountDetailsCustom.getId())
+                    .orElseThrow(() -> new CustomException("Account is not found with this id " + accountDetailsCustom.getId(), HttpStatus.NOT_FOUND));
+
+                // Update existing education candidate
+                EducationCandidate eduCandidate = eduCandidateRepository.findById(id)
+                        .orElseThrow(() -> new CustomException("Education candidate not found with this id " + id, HttpStatus.NOT_FOUND));
+
+                eduCandidate.setNameEducation(eduCandidateRequestDTO.getNameEducation());
+                eduCandidate.setMajor(eduCandidateRequestDTO.getMajor());
+                eduCandidate.setStartAt(eduCandidateRequestDTO.getStartAt());
+                eduCandidate.setEndAt(eduCandidateRequestDTO.getEndAt());
+                eduCandidate.setInfo(eduCandidateRequestDTO.getInfo());
+                eduCandidate.setStatus(true);
+                eduCandidateRepository.save(eduCandidate);
             return true;
         }
         return false;
@@ -74,7 +77,7 @@ public class EDuCandidateService implements IEduCandidateService{
         if (authentication.getPrincipal() instanceof AccountDetailsCustom accountDetailsCustom) {
           EducationCandidate educationCandidate = eduCandidateRepository.findById(id).orElseThrow(() -> new CustomException("Education Candidate not found with this id " + id, HttpStatus.NOT_FOUND));
             if (Objects.equals(educationCandidate.getCandidate().getAccount().getId(), accountDetailsCustom.getId())) {
-                educationCandidate.setStatus(2);
+                educationCandidate.setStatus(false);
                 eduCandidateRepository.save(educationCandidate);
                 return true;
             }
@@ -114,7 +117,9 @@ public class EDuCandidateService implements IEduCandidateService{
     }
 @Override
 public Page<EducationCandidateResponseDTO> searchByNameWithPaginationAndSort(Pageable pageable, String keyword) {
-    Page<EducationCandidate> list = eduCandidateRepository.findAll(pageable);
+    Page<EducationCandidate> list = eduCandidateRepository.findAllByAddressContainingKeyword(pageable,keyword);
     return list.map(EducationCandidateResponseDTO::new);
     }
+
+
 }

@@ -23,7 +23,7 @@ public class CandidateController {
     private ICandidateService candidateService;
     @PostMapping("")
     ResponseEntity<?> addCandidate(@Valid @ModelAttribute("candidate")CandidateRequestDTO candidateRequestDTO) throws CustomException {
-            boolean check = candidateService.saveOrUpdate(candidateRequestDTO);
+            boolean check = candidateService.save(candidateRequestDTO);
             if(check) {
                 APIResponse apiResponse = new APIResponse(200, "Create candidate success");
                 return new ResponseEntity<>(apiResponse, HttpStatus.CREATED);
@@ -31,9 +31,9 @@ public class CandidateController {
                 throw new CustomException("Lack of compulsory registration information or invalid information.", HttpStatus.UNPROCESSABLE_ENTITY);
             }
     }
-    @PutMapping("")
-    ResponseEntity<?> EditCandidate(@Valid @ModelAttribute("candidate")CandidateRequestDTO candidateRequestDTO) throws CustomException {
-        boolean check = candidateService.saveOrUpdate(candidateRequestDTO);
+    @PutMapping("/{id}")
+    ResponseEntity<?> EditCandidate(@Valid @PathVariable Integer id, @ModelAttribute("candidate")CandidateRequestDTO candidateRequestDTO) throws CustomException {
+        boolean check = candidateService.saveOrUpdate(candidateRequestDTO, id);
         if(check) {
             APIResponse apiResponse = new APIResponse(200, "Update candidate success");
             return new ResponseEntity<>(apiResponse, HttpStatus.CREATED);

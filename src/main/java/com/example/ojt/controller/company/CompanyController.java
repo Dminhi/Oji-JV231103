@@ -28,9 +28,9 @@ public class CompanyController {
             throw new CustomException("Lack of compulsory registration information or invalid information.", HttpStatus.UNPROCESSABLE_ENTITY);
         }
     }
-    @PutMapping("")
-    ResponseEntity<?> EditCompany(@Valid @ModelAttribute("company") EditCompanyRequestDTO companyRequestDTO) throws CustomException {
-        boolean check = companyService.update(companyRequestDTO);
+    @PutMapping("/{id}")
+    ResponseEntity<?> EditCompany(@Valid @PathVariable Integer id, @ModelAttribute("company") EditCompanyRequestDTO companyRequestDTO) throws CustomException {
+        boolean check = companyService.update(companyRequestDTO,id);
         if(check) {
             APIResponse apiResponse = new APIResponse(200, "Update company success");
             return new ResponseEntity<>(apiResponse, HttpStatus.CREATED);

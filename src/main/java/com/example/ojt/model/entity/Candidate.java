@@ -1,7 +1,9 @@
 package com.example.ojt.model.entity;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 import java.util.Date;
+import java.util.Set;
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -15,7 +17,7 @@ public class Candidate {
     private Integer id;
     @Column(name = "name", columnDefinition = "VARCHAR(50)")
     private String name;
-    private int status;
+    private boolean status;
     @Column(name = "birthday", columnDefinition = "VARCHAR(20)")
     private String birthday;
     private String address;
@@ -37,4 +39,13 @@ public class Candidate {
     @OneToOne
     @JoinColumn(name = "account_id")
     private Account account;
+    @OneToMany(mappedBy = "candidate")
+    @JsonIgnore
+    private Set<SkillsCandidate> skillsCandidates;
+    @OneToMany(mappedBy = "candidate")
+    @JsonIgnore
+    private Set<EducationCandidate> educationCandidates;
+    @OneToMany(mappedBy = "candidate")
+    @JsonIgnore
+    private Set<ExperienceCandidate> experienceCandidates;
 }
