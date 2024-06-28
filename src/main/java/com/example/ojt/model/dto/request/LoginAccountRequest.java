@@ -13,9 +13,6 @@ import lombok.Setter;
 @Getter
 @Setter
 public class LoginAccountRequest {
-    @Email(message = "Email should be valid")
     private String email;
-    @NotEmpty(message = "Please fill password!")
-    @Size(min = 4, max = 12, message = "Password's length must be between 4 and 12")
     private String password;
 }

@@ -1,6 +1,8 @@
 package com.example.ojt.controller;
 
 import com.example.ojt.exception.CustomException;
+import com.example.ojt.exception.RequestErrorException;
+import com.example.ojt.model.dto.request.*;
 import com.example.ojt.model.dto.mapper.HttpResponse;
 import com.example.ojt.model.dto.mapper.ResponseMapper;
 import com.example.ojt.model.dto.request.LoginAccountRequest;
@@ -8,9 +10,9 @@ import com.example.ojt.model.dto.request.RegisterAccount;
 import com.example.ojt.model.dto.request.RegisterAccountCompany;
 import com.example.ojt.model.dto.response.APIResponse;
 import com.example.ojt.model.dto.response.JWTResponse;
+import com.example.ojt.model.dto.responsewapper.ResponseWapper;
 import com.example.ojt.service.account.IAccountService;
 import com.example.ojt.exception.NotFoundException;
-import com.example.ojt.model.dto.request.AccountForgotPassword;
 import com.example.ojt.service.account.EmailService;
 import com.example.ojt.service.account.TokenService;
 import jakarta.validation.Valid;
@@ -32,22 +34,29 @@ public class AuthController {
     private TokenService tokenService;
 
     @PostMapping("/sign-in")
-    public ResponseEntity<ResponseMapper<JWTResponse>> doLogin(@Valid @RequestBody LoginAccountRequest loginAccountRequest) throws Exception {
+    public ResponseEntity<?> doLogin(@Valid @RequestBody LoginAccountRequest loginAccountRequest) throws Exception {
         JWTResponse jwtResponse = accountService.login(loginAccountRequest);
+        return new ResponseEntity<>(new ResponseWapper<>(
+                HttpStatus.OK.value(),
+                "Login successful",
+                jwtResponse), HttpStatus.OK);
 
-        return new ResponseEntity<>(new ResponseMapper<>(HttpResponse.SUCCESS,
-                HttpStatus.OK.value(), HttpStatus.OK.name(), jwtResponse), HttpStatus.OK);
     }
-//    @PostMapping("/company/sign-in")
-//    public ResponseEntity<ResponseMapper<JWTResponse>> doLoginCompany(@Valid @RequestBody LoginAccountRequest loginAccountRequest) throws Exception {
-//        JWTResponse jwtResponse = accountService.loginCompany(loginAccountRequest);
-//
-//        return new ResponseEntity<>(new ResponseMapper<>(HttpResponse.SUCCESS,
-//                HttpStatus.OK.value(), HttpStatus.OK.name(), jwtResponse), HttpStatus.OK);
-//    }
+
+    @PostMapping("company/sign-in")
+    public ResponseEntity<?> doCompanyLogin(@Valid @RequestBody LoginAccountRequest loginAccountRequest) throws Exception {
+        JWTResponse jwtResponse = accountService.companyLogin(loginAccountRequest);
+        return new ResponseEntity<>(new ResponseWapper<>(
+                HttpStatus.OK.value(),
+                "Login successful",
+                jwtResponse), HttpStatus.OK);
+
+    
+    }
+
 
     @PostMapping("/sign-up")
-    public ResponseEntity<?> doRegister(@Valid @RequestBody RegisterAccount registerAccount) throws CustomException {
+    public ResponseEntity<?> doRegister(@Valid @RequestBody RegisterAccount registerAccount) throws CustomException, RequestErrorException {
         boolean check = accountService.register(registerAccount);
         if (check) {
             APIResponse response = new APIResponse(200, "Register successful");
@@ -69,7 +78,7 @@ public class AuthController {
     }
 
     @PostMapping("/reset-password-request")
-    public ResponseEntity<String> resetPasswordRequest(@RequestBody AccountForgotPassword accountForgotPassword) {
+    public ResponseEntity<String> resetPasswordRequest(@RequestBody AccountForgotPassword accountForgotPassword) throws NotFoundException {
         String token = tokenService.generateToken(accountForgotPassword.getEmail()); // Generate token for the email
         emailService.sendResetPasswordEmail(accountForgotPassword.getEmail(), token);
         return ResponseEntity.ok("Reset password email sent.");
@@ -85,10 +94,12 @@ public class AuthController {
     }
 
     @PostMapping("/reset-password")
-    public ResponseEntity<String> resetPassword(@RequestParam String token, @RequestParam String newPassword) throws NotFoundException {
+    public ResponseEntity<String> resetPassword(@RequestParam String token, @RequestBody ResetPassword newPassword) throws NotFoundException {
+        System.out.println(newPassword);
         if (tokenService.isValid(token)) {
             String email = tokenService.getEmailFromToken(token);
-            accountService.updatePassword(email, newPassword);
+            accountService.updatePassword(email, newPassword.getNewPassword());
+            tokenService.removeToken(token);
             return ResponseEntity.ok("Password updated successfully.");
         } else {
             return ResponseEntity.badRequest().body("Invalid token");

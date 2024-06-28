@@ -24,4 +24,10 @@ public class TokenService {
     public String getEmailFromToken(String token) {
         return tokenStorage.get(token);
     }
+
+    public void removeToken(String token) {
+        tokenStorage.remove(token);
+    }
+
+
 }

@@ -13,12 +13,12 @@ import com.example.ojt.model.dto.response.JWTResponse;
 public interface IAccountService {
     JWTResponse login(LoginAccountRequest loginAccountRequest) throws CustomException;
 
-    boolean register(RegisterAccount registerAccount) throws CustomException;
+    boolean register(RegisterAccount registerAccount) throws CustomException, RequestErrorException;
 
     boolean registerCompany(RegisterAccountCompany registerAccount) throws CustomException;
     AccountResponse changePassword(AccountEditPassword accountEditPassword) throws NotFoundException, RequestErrorException;
 
     void updatePassword(String email, String newPassword) throws NotFoundException;
 
-//    JWTResponse loginCompany(LoginAccountRequest loginAccountRequest) throws CustomException;
+    public JWTResponse companyLogin(LoginAccountRequest loginAccountRequest) throws CustomException;
 }
