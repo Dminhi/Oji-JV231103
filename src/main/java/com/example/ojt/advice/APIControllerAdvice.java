@@ -2,18 +2,22 @@ package com.example.ojt.advice;
 
 import com.example.ojt.exception.*;
 import com.example.ojt.model.dto.response.ResponseError;
+import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
+import java.io.IOException;
 import java.nio.file.AccessDeniedException;
 import java.util.HashMap;
 import java.util.Map;
 
 @RestControllerAdvice
 public class APIControllerAdvice {
+
     @ExceptionHandler(AccessDeniedException.class)
     @ResponseStatus(HttpStatus.FORBIDDEN)
     public Map<String,Object> forbidden(AccessDeniedException e){
@@ -37,10 +41,13 @@ public class APIControllerAdvice {
     }
 
     @ExceptionHandler(CustomException.class)
-    @ResponseStatus(HttpStatus.CONFLICT)
-    public Map<String, Object> customException(CustomException c) {
+    @ResponseBody
+    public Map<String, Object> handleCustomException(CustomException ex, HttpServletResponse response) throws IOException {
+        response.setStatus(ex.getHttpStatus().value());
         Map<String, Object> map = new HashMap<>();
-        map.put("error" ,new ResponseError(c.getHttpStatus().value(), c.getHttpStatus().name(),c.getMessage()));
+        map.put("error", "Bad Request");
+        map.put("statusCode", ex.getHttpStatus().value());
+        map.put("message", ex.getMessage());
         return map;
     }
 

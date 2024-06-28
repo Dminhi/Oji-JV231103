@@ -4,6 +4,7 @@ import com.example.ojt.exception.CustomException;
 import com.example.ojt.model.dto.mapper.HttpResponse;
 import com.example.ojt.model.dto.mapper.PageDataDTO;
 import com.example.ojt.model.dto.mapper.ResponseMapper;
+import com.example.ojt.model.dto.request.AddDescriptionCandidate;
 import com.example.ojt.model.dto.request.CandidateRequestDTO;
 import com.example.ojt.model.dto.response.APIResponse;
 import com.example.ojt.model.dto.response.CandidateResponseDTO;
@@ -30,6 +31,16 @@ public class CandidateController {
             }else {
                 throw new CustomException("Lack of compulsory registration information or invalid information.", HttpStatus.UNPROCESSABLE_ENTITY);
             }
+    }
+    @PostMapping("/addDescription")
+    ResponseEntity<?> addDescriptionCandidate(@Valid @RequestBody AddDescriptionCandidate addDescriptionCandidate) throws CustomException {
+        boolean check = candidateService.saveDescription(addDescriptionCandidate);
+        if(check) {
+            APIResponse apiResponse = new APIResponse(200, "Create candidate success");
+            return new ResponseEntity<>(apiResponse, HttpStatus.CREATED);
+        }else {
+            throw new CustomException("Lack of compulsory registration information or invalid information.", HttpStatus.UNPROCESSABLE_ENTITY);
+        }
     }
     @PutMapping("/{id}")
     ResponseEntity<?> EditCandidate(@Valid @PathVariable Integer id, @ModelAttribute("candidate")CandidateRequestDTO candidateRequestDTO) throws CustomException {

@@ -3,6 +3,7 @@ package com.example.ojt.service.candidate;
 
 import com.example.ojt.exception.CustomException;
 import com.example.ojt.model.dto.mapper.PageDataDTO;
+import com.example.ojt.model.dto.request.AddDescriptionCandidate;
 import com.example.ojt.model.dto.request.CandidateRequestDTO;
 import com.example.ojt.model.dto.response.CandidateListResponseDTO;
 import com.example.ojt.model.dto.response.CandidateResponseDTO;
@@ -22,5 +23,7 @@ public interface ICandidateService {
 
     Page<CandidateListResponseDTO> searchByNameWithPaginationAndSort(Pageable pageable, String keyword);
     PageDataDTO<CandidateListResponseDTO> getAllCandidate(String keyword, int page, int limit, String sort, String order) throws CustomException;
+
+    boolean saveDescription(AddDescriptionCandidate addDescriptionCandidate) throws CustomException;
 }
 
