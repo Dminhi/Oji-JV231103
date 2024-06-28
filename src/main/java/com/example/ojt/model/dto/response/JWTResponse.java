@@ -15,8 +15,10 @@ public class JWTResponse {
     private final String type = "Bearer";
     private String accessToken ;
     private String email;
+    private String avatar;
+    private String name;
     private String roleName;
-    private Long accountId;
+    private Integer accountId;
     private Collection<? extends GrantedAuthority> roleSet;
     private Integer status;
 }

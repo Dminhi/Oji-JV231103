@@ -19,4 +19,6 @@ public interface IAccountService {
     AccountResponse changePassword(AccountEditPassword accountEditPassword) throws NotFoundException, RequestErrorException;
 
     void updatePassword(String email, String newPassword) throws NotFoundException;
+
+//    JWTResponse loginCompany(LoginAccountRequest loginAccountRequest) throws CustomException;
 }
