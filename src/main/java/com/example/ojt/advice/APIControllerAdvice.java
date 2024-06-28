@@ -2,12 +2,15 @@ package com.example.ojt.advice;
 
 import com.example.ojt.exception.*;
 import com.example.ojt.model.dto.response.ResponseError;
+import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
+import java.io.IOException;
 import java.nio.file.AccessDeniedException;
 import java.util.HashMap;
 import java.util.Map;
@@ -37,24 +40,27 @@ public class APIControllerAdvice {
     }
 
     @ExceptionHandler(CustomException.class)
-    @ResponseStatus(HttpStatus.CONFLICT)
-    public Map<String, Object> customException(CustomException c) {
+    @ResponseBody
+    public Map<String, Object> handleCustomException(CustomException ex, HttpServletResponse response) throws IOException {
+        response.setStatus(ex.getHttpStatus().value());
         Map<String, Object> map = new HashMap<>();
-        map.put("error" ,new ResponseError(c.getHttpStatus().value(), c.getHttpStatus().name(),c.getMessage()));
+        map.put("error", "Bad Request");
+        map.put("statusCode", ex.getHttpStatus().value());
+        map.put("message", ex.getMessage());
         return map;
     }
 
 
 
     @ExceptionHandler(NotFoundException.class)
-    @ResponseStatus(HttpStatus.NOT_FOUND)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
     public Map<String,Object> handleNotFoundException(NotFoundException ex) {
         Map<String,Object> map = new HashMap<>();
         map.put("error", "Bad Request");
         map.put("statusCode", 400);
         map.put("message", ex.getMessage());
         Map<String,Object> response = new HashMap<>();
-        response.put("Fields Error",map);
+        response.put("FieldsError",map);
         return response;
     }
 
@@ -66,7 +72,7 @@ public class APIControllerAdvice {
         map.put("statusCode", 403);
         map.put("message", e.getMessage());
         Map<String,Object> response = new HashMap<>();
-        response.put("Fields Error",map);
+        response.put("FieldsError",map);
         return response;
     }
 
@@ -79,7 +85,7 @@ public class APIControllerAdvice {
         map.put("error", "Bad Request");
 
         Map<String,Object> response = new HashMap<>();
-        response.put("Fields Error",map);
+        response.put("FieldsError",map);
         return response;
     }
 }

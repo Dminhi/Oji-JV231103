@@ -52,11 +52,15 @@ public class AccountService implements IAccountService {
         try {
             authentication = manager.authenticate(new UsernamePasswordAuthenticationToken(loginAccountRequest.getEmail(), loginAccountRequest.getPassword()));
         } catch (AuthenticationException e) {
+            System.out.println(e);
             throw new CustomException("Email or password incorrect", HttpStatus.NOT_FOUND);
         }
         AccountDetailsCustom detailsCustom = (AccountDetailsCustom) authentication.getPrincipal();
         if (detailsCustom.getStatus() == 2) {
             throw new CustomException("Account has been blocked!", HttpStatus.FORBIDDEN);
+        }
+        if (detailsCustom.getRoleName().equals("ROLE_COMPANY")) {
+            throw new CustomException("Your Account invalid", HttpStatus.FORBIDDEN);
         }
         String accessToken = jwtProvider.generateAccessToken(detailsCustom);
         return JWTResponse.builder()
@@ -68,12 +72,37 @@ public class AccountService implements IAccountService {
     }
 
     @Override
-    public boolean register(RegisterAccount registerAccount) throws CustomException {
+    public JWTResponse companyLogin(LoginAccountRequest loginAccountRequest) throws CustomException {
+        // Xac thuc email and password
+        Authentication authentication = null;
+        try {
+            authentication = manager.authenticate(new UsernamePasswordAuthenticationToken(loginAccountRequest.getEmail(), loginAccountRequest.getPassword()));
+        } catch (AuthenticationException e) {
+            throw new CustomException("Email or password incorrect", HttpStatus.NOT_FOUND);
+        }
+        AccountDetailsCustom detailsCustom = (AccountDetailsCustom) authentication.getPrincipal();
+        if (detailsCustom.getStatus() == 2) {
+            throw new CustomException("Account has been blocked!", HttpStatus.FORBIDDEN);
+        }
+        if (detailsCustom.getRoleName().equals("ROLE_CANDIDATE")) {
+            throw new CustomException("Your Account invalid", HttpStatus.FORBIDDEN);
+        }
+        String accessToken = jwtProvider.generateAccessToken(detailsCustom);
+        return JWTResponse.builder()
+                .email(detailsCustom.getEmail())
+                .roleName(detailsCustom.getRoleName())
+                .status(detailsCustom.getStatus())
+                .accessToken(accessToken)
+                .build();
+    }
+
+    @Override
+    public boolean register(RegisterAccount registerAccount) throws RequestErrorException, CustomException {
         if (accountRepository.existsByEmail(registerAccount.getEmail())) {
             throw new CustomException("Email existed!", HttpStatus.CONFLICT);
         }
         if (!registerAccount.getPassword().equals(registerAccount.getConfirmPassword())) {
-            throw new CustomException("Password do not match!", HttpStatus.BAD_REQUEST);
+            throw new CustomException("Password do not match!",HttpStatus.CONFLICT);
         }
         Role role = roleRepository.findByRoleName(RoleName.valueOf(registerAccount.getRoleName()))
                 .orElseThrow(() -> new CustomException("Role not found", HttpStatus.NOT_FOUND));
@@ -93,9 +122,6 @@ public class AccountService implements IAccountService {
         if (accountRepository.existsByEmail(registerAccount.getEmail())) {
             throw new CustomException("Email existed!", HttpStatus.CONFLICT);
         }
-        if (!registerAccount.getPassword().equals(registerAccount.getConfirmPassword())) {
-            throw new CustomException("Password do not match!", HttpStatus.BAD_REQUEST);
-        }
         Role role = roleRepository.findByRoleName(RoleName.valueOf(registerAccount.getRoleName()))
                 .orElseThrow(() -> new CustomException("Role not found", HttpStatus.NOT_FOUND));
         Account account = Account.builder()
@@ -105,12 +131,7 @@ public class AccountService implements IAccountService {
                 .role(role)
                 .build();
         accountRepository.save(account);
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        if (authentication.getPrincipal() instanceof AccountDetailsCustom accountDetailsCustom) {
-            Account accountCompany = accountRepository.findById(accountDetailsCustom.getId())
-                    .orElseThrow(() -> new CustomException("Account is not found with this id " + accountDetailsCustom.getId(), HttpStatus.NOT_FOUND));
 
-            // Check for duplicate company based on unique constraints
             if (companyRepository.existsByName(registerAccount.getNameCompany())) {
                 throw new CustomException("Company with name " + registerAccount.getNameCompany() + " already exists", HttpStatus.CONFLICT);
             }
@@ -126,9 +147,7 @@ public class AccountService implements IAccountService {
             company.setLogo("https://img.freepik.com/free-vector/free-vector-panda-bamboo-mascot-logo_779267-1386.jpg?t=st=1719451968~exp=1719455568~hmac=f2499171ac9d6522bb5f76f54c90acd2b67bf651182b9820fc9c3bb45793ee97&w=740");
             company.setCreatedAt(new Date());
             companyRepository.save(company);
-            return true;
-        }
-        return false;
+        return true;
     }
 
     @Override
@@ -149,6 +168,7 @@ public class AccountService implements IAccountService {
     public void updatePassword(String email, String newPassword) throws NotFoundException {
         Account account = accountRepository.findByEmail(email).orElseThrow(()->new NotFoundException("Account not found with this email : "+email));;
         account.setPassword(passwordEncoder.encode(newPassword));
+
         accountRepository.save(account);
     }
 
