@@ -9,11 +9,9 @@ import com.example.ojt.model.dto.request.RegisterAccount;
 import com.example.ojt.model.dto.request.RegisterAccountCompany;
 import com.example.ojt.model.dto.response.AccountResponse;
 import com.example.ojt.model.dto.response.JWTResponse;
-import com.example.ojt.model.entity.Account;
-import com.example.ojt.model.entity.Company;
-import com.example.ojt.model.entity.Role;
-import com.example.ojt.model.entity.RoleName;
+import com.example.ojt.model.entity.*;
 import com.example.ojt.repository.IAccountRepository;
+import com.example.ojt.repository.ICandidateRepository;
 import com.example.ojt.repository.ICompanyRepository;
 import com.example.ojt.repository.IRoleRepository;
 import com.example.ojt.security.jwt.JWTProvider;
@@ -31,6 +29,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Date;
 
+import static com.example.ojt.model.entity.RoleName.ROLE_COMPANY;
+
 @Service
 public class AccountService implements IAccountService {
     @Autowired
@@ -45,9 +45,11 @@ public class AccountService implements IAccountService {
     private IRoleRepository roleRepository;
     @Autowired
     private ICompanyRepository companyRepository;
+    @Autowired
+    private ICandidateRepository candidateRepository;
     @Override
     public JWTResponse login(LoginAccountRequest loginAccountRequest) throws CustomException {
-        // Xac thuc email and password
+      // Xac thuc email and password
         Authentication authentication = null;
         try {
             authentication = manager.authenticate(new UsernamePasswordAuthenticationToken(loginAccountRequest.getEmail(), loginAccountRequest.getPassword()));
@@ -62,12 +64,18 @@ public class AccountService implements IAccountService {
         if (detailsCustom.getRoleName().equals("ROLE_COMPANY")) {
             throw new CustomException("Your Account invalid", HttpStatus.FORBIDDEN);
         }
+        
+
         String accessToken = jwtProvider.generateAccessToken(detailsCustom);
         return JWTResponse.builder()
                 .email(detailsCustom.getEmail())
                 .roleName(detailsCustom.getRoleName())
                 .status(detailsCustom.getStatus())
+                .name(detailsCustom.getName())
+                .avatar(detailsCustom.getAvatar())
                 .accessToken(accessToken)
+                .accountId(detailsCustom.getId())
+                .roleSet(detailsCustom.getAuthorities())
                 .build();
     }
 
@@ -96,8 +104,8 @@ public class AccountService implements IAccountService {
                 .build();
     }
 
-    @Override
-    public boolean register(RegisterAccount registerAccount) throws RequestErrorException, CustomException {
+    
+    public boolean register(RegisterAccount registerAccount) throws CustomException {
         if (accountRepository.existsByEmail(registerAccount.getEmail())) {
             throw new CustomException("Email existed!", HttpStatus.CONFLICT);
         }
@@ -113,6 +121,11 @@ public class AccountService implements IAccountService {
                 .role(role)
                 .build();
         accountRepository.save(account);
+        Candidate candidate = new Candidate();
+        candidate.setAccount(account);
+        candidate.setCreatedAt(new Date());
+        candidate.setAvatar("https://seeklogo.com/images/A/anonymous-logo-7E968E8797-seeklogo.com.png");
+        candidateRepository.save(candidate);
         return true;
     }
 
@@ -148,6 +161,7 @@ public class AccountService implements IAccountService {
             company.setCreatedAt(new Date());
             companyRepository.save(company);
         return true;
+
     }
 
     @Override
@@ -171,6 +185,8 @@ public class AccountService implements IAccountService {
 
         accountRepository.save(account);
     }
+
+
 
     public static AccountResponse toUserResponse(Account account) {
         if (account == null) {

@@ -3,6 +3,7 @@ package com.example.ojt.service.candidate;
 
 import com.example.ojt.exception.CustomException;
 import com.example.ojt.model.dto.mapper.PageDataDTO;
+import com.example.ojt.model.dto.request.AddDescriptionCandidate;
 import com.example.ojt.model.dto.request.CandidateRequestDTO;
 import com.example.ojt.model.dto.response.CandidateListResponseDTO;
 import com.example.ojt.model.dto.response.CandidateResponseDTO;
@@ -45,14 +46,14 @@ public class CandidateService implements ICandidateService {
     @Override
     public boolean saveOrUpdate(CandidateRequestDTO candidateRequestDTO, Integer id) throws CustomException {
         String fileName;
-            CandidateResponseDTO candidateResponseDTO = findById(id);
-            // updateCandidate
-            // kiểm tra có upload ảnh không
-            if (candidateRequestDTO.getAvatar() != null && candidateRequestDTO.getAvatar().getSize() > 0) {
-                fileName = uploadService.uploadFileToServer(candidateRequestDTO.getAvatar());
-            } else {
-                fileName = candidateResponseDTO.getAvatar();
-            }
+        CandidateResponseDTO candidateResponseDTO = findById(id);
+        // updateCandidate
+        // kiểm tra có upload ảnh không
+        if (candidateRequestDTO.getAvatar() != null && candidateRequestDTO.getAvatar().getSize() > 0) {
+            fileName = uploadService.uploadFileToServer(candidateRequestDTO.getAvatar());
+        } else {
+            fileName = candidateResponseDTO.getAvatar();
+        }
 
 
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -88,18 +89,33 @@ public class CandidateService implements ICandidateService {
     @Override
     public boolean save(CandidateRequestDTO candidateRequestDTO) throws CustomException {
         String fileName;
-            // addCandidate
-            // check image
-            if (candidateRequestDTO.getAvatar() == null || candidateRequestDTO.getAvatar().getSize() == 0) {
-                throw new CustomException("File image is not found", HttpStatus.NOT_FOUND);
-            }
-            fileName = uploadService.uploadFileToServer(candidateRequestDTO.getAvatar());
+        // addCandidate
+        // check image
+        if (candidateRequestDTO.getAvatar() == null || candidateRequestDTO.getAvatar().getSize() == 0) {
+            throw new CustomException("File image is not found", HttpStatus.NOT_FOUND);
+        }
+        fileName = uploadService.uploadFileToServer(candidateRequestDTO.getAvatar());
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication.getPrincipal() instanceof AccountDetailsCustom accountDetailsCustom) {
             Account account = accountRepository.findById(accountDetailsCustom.getId())
                     .orElseThrow(() -> new CustomException("Account is not found with this id " + accountDetailsCustom.getId(), HttpStatus.NOT_FOUND));
+//            Candidate candidate = account.getCandidate();
+//
+//            candidate.setName(candidateRequestDTO.getName());
+//            candidate.setStatus(candidateRequestDTO.isStatus());
+//            candidate.setBirthday(candidateRequestDTO.getBirthday());
+//            candidate.setAddress(candidateRequestDTO.getAddress());
+//            candidate.setPhone(candidateRequestDTO.getPhone());
+//            candidate.setGender(candidateRequestDTO.getGender());
+//            candidate.setLinkLinkedin(candidateRequestDTO.getLinkLinkedin());
+//            candidate.setLinkGit(candidateRequestDTO.getLinkGit());
+//            candidate.setPosition(candidateRequestDTO.getPosition());
+//            candidate.setCreatedAt(candidateRequestDTO.getCreateAt());
+//            candidate.setUpdatedAt(new Date());
+//            candidate.setAvatar(fileName);
 
-            Candidate candidate = Candidate.builder()
+
+           Candidate  candidate = Candidate.builder()
                     .name(candidateRequestDTO.getName())
                     .status(candidateRequestDTO.isStatus())
                     .birthday(candidateRequestDTO.getBirthday())
@@ -123,6 +139,23 @@ public class CandidateService implements ICandidateService {
         }
     }
 
+    @Override
+    public boolean saveDescription(AddDescriptionCandidate addDescriptionCandidate) throws CustomException {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication.getPrincipal() instanceof AccountDetailsCustom accountDetailsCustom) {
+            Account account = accountRepository.findById(accountDetailsCustom.getId())
+                    .orElseThrow(() -> new CustomException("Account is not found with this id " + accountDetailsCustom.getId(), HttpStatus.NOT_FOUND));
+
+            Candidate candidate = Candidate.builder()
+                    .aboutme(addDescriptionCandidate.getDescription())
+                    .account(account)
+                    .build();
+            candidateRepository.save(candidate);
+            return true;
+        } else {
+            throw new CustomException("Principal is not an instance of AccountDetailsCustom", HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
 
     @Override
     public boolean removeCandidate(Integer id) throws CustomException {
@@ -146,7 +179,8 @@ public class CandidateService implements ICandidateService {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication.getPrincipal() instanceof AccountDetailsCustom accountDetailsCustom) {
             Account account = accountRepository.findById(accountDetailsCustom.getId())
-                    .orElseThrow(() -> new CustomException("Account is not found with this id " + accountDetailsCustom.getId(), HttpStatus.NOT_FOUND));Candidate candidate = account.getCandidate();
+                    .orElseThrow(() -> new CustomException("Account is not found with this id " + accountDetailsCustom.getId(), HttpStatus.NOT_FOUND));
+            Candidate candidate = account.getCandidate();
             CandidateResponseDTO candidateResponseDTO = findById(account.getCandidate().getId());
             if (candidate == null) {
                 throw new CustomException("Candidate not found for this account", HttpStatus.NOT_FOUND);
@@ -156,7 +190,7 @@ public class CandidateService implements ICandidateService {
         throw new CustomException("You need to login", HttpStatus.UNAUTHORIZED);
     }
 
-@Override
+    @Override
     public CandidateResponseDTO findById(Integer id) throws CustomException {
         Candidate candidate = candidateRepository.findById(id)
                 .orElseThrow(() -> new CustomException("Candidate is not found with this id " + id, HttpStatus.NOT_FOUND));
@@ -171,7 +205,7 @@ public class CandidateService implements ICandidateService {
 
     @Override
     public Page<CandidateListResponseDTO> searchByNameWithPaginationAndSort(Pageable pageable, String keyword) {
-        Page<Candidate> list = candidateRepository.findAndSort(pageable,keyword);
+        Page<Candidate> list = candidateRepository.findAndSort(pageable, keyword);
         return list.map(CandidateListResponseDTO::new);
     }
 
@@ -199,5 +233,7 @@ public class CandidateService implements ICandidateService {
         pageDataDTO.setContent(candidateResponseDTOS.getContent());
         return pageDataDTO;
     }
+
+
 }
 

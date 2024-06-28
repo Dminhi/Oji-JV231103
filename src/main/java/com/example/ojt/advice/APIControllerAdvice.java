@@ -17,6 +17,7 @@ import java.util.Map;
 
 @RestControllerAdvice
 public class APIControllerAdvice {
+
     @ExceptionHandler(AccessDeniedException.class)
     @ResponseStatus(HttpStatus.FORBIDDEN)
     public Map<String,Object> forbidden(AccessDeniedException e){

@@ -19,6 +19,8 @@ public class AccountDetailsCustom implements UserDetails {
     private Integer id;
     private String email;
     private String password;
+    private String avatar;
+    private String name;
     private Integer status;
     private Role role;
     private Collection<? extends GrantedAuthority> authorities;
@@ -30,6 +32,8 @@ public class AccountDetailsCustom implements UserDetails {
                 .id(account.getId())
                 .password(account.getPassword())
                 .email(account.getEmail())
+                .avatar(account.getCandidate().getAvatar())
+                .name(account.getCandidate().getName())
                 .authorities(Collections.singletonList(authority))
                 .status(account.getStatus())
                 .role(role)
